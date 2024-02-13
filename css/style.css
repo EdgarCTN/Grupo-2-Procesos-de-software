@@ -1,0 +1,67 @@
+
+
+body {
+    font-family: 'Open Sans', sans-serif; /* Fuente personalizada */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background: linear-gradient(to right, #1c92d2, #f2fcfe); /* Gradiente de fondo */
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+.image-container {
+    flex: 0.4;
+    background: url('/FISI.jpg') no-repeat center center / cover;
+}
+
+.form-container {
+    flex: 0.6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); /* Sombra de caja */
+}
+
+form {
+    width: 100%;
+    max-width: 300px;
+}
+
+h1 {
+    margin-left: 50px;
+    color: #1c92d2; /* Color personalizado */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Añadido para restablecer los estilos predeterminados y heredados */
+}
+
+input[type="submit"] {
+    color: white;
+    background-color: #1c92d2; /* Color personalizado */
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* Transición */
+}
+
+input[type="submit"]:hover {
+    background-color: #10578b; /* Cambio de color al pasar el ratón */
+}
+
