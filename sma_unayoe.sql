@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-02-2024 a las 23:01:04
--- Versión del servidor: 10.4.32-MariaDB
+-- Tiempo de generación: 17-02-2024 a las 20:19:03
+-- Versión del servidor: 8.0.35
 -- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -28,13 +28,13 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `alumno` (
-  `cod_alumno` varchar(20) NOT NULL,
-  `id_usuario` int(11) NOT NULL,
-  `nombre` varchar(40) NOT NULL,
-  `apellidos` varchar(40) NOT NULL,
-  `correo` varchar(40) NOT NULL,
-  `facultad` varchar(50) NOT NULL,
-  `numero_celular` varchar(10) NOT NULL
+  `cod_alumno` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_usuario` int NOT NULL,
+  `nombre` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `apellidos` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `correo` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `facultad` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `numero_celular` varchar(10) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -44,10 +44,10 @@ CREATE TABLE `alumno` (
 --
 
 CREATE TABLE `curso` (
-  `cod_curso` varchar(20) NOT NULL,
-  `nombre_curso` varchar(30) NOT NULL,
-  `ciclo` int(11) NOT NULL,
-  `creditos` int(11) NOT NULL
+  `cod_curso` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombre_curso` varchar(30) COLLATE utf8mb4_general_ci NOT NULL,
+  `ciclo` int NOT NULL,
+  `creditos` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -57,10 +57,10 @@ CREATE TABLE `curso` (
 --
 
 CREATE TABLE `evidencia` (
-  `id_evidencia` int(11) NOT NULL,
-  `idtutoria` int(11) DEFAULT NULL,
-  `imagen` blob DEFAULT NULL,
-  `descripción` text DEFAULT NULL
+  `id_evidencia` int NOT NULL,
+  `idtutoria` int DEFAULT NULL,
+  `imagen` blob,
+  `descripción` text COLLATE utf8mb4_general_ci
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -70,12 +70,12 @@ CREATE TABLE `evidencia` (
 --
 
 CREATE TABLE `tutor` (
-  `cod_tutor` varchar(20) NOT NULL,
-  `id_usuario` int(11) NOT NULL,
-  `nombre` varchar(40) NOT NULL,
-  `apellidos` varchar(40) NOT NULL,
-  `correo` varchar(50) NOT NULL,
-  `numero_celular` varchar(10) NOT NULL
+  `cod_tutor` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `id_usuario` int NOT NULL,
+  `nombre` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `apellidos` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `correo` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `numero_celular` varchar(10) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -85,13 +85,13 @@ CREATE TABLE `tutor` (
 --
 
 CREATE TABLE `tutoría` (
-  `id_tutoria` int(11) NOT NULL,
-  `codalumno` varchar(20) NOT NULL,
-  `codtutor` varchar(20) NOT NULL,
-  `codcurso` varchar(20) NOT NULL,
+  `id_tutoria` int NOT NULL,
+  `codalumno` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `codtutor` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `codcurso` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
   `fecha` date DEFAULT NULL,
   `hora` time DEFAULT NULL,
-  `tema` varchar(50) NOT NULL
+  `tema` varchar(50) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -101,21 +101,22 @@ CREATE TABLE `tutoría` (
 --
 
 CREATE TABLE `usuarios` (
-  `id` int(11) NOT NULL,
-  `nombre` varchar(50) NOT NULL,
-  `nombre_usuario` varchar(20) NOT NULL,
-  `contraseña` varchar(20) NOT NULL,
-  `rol` varchar(15) NOT NULL
+  `id` int NOT NULL,
+  `nombre` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
+  `nombre_usuario` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `contraseña` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
+  `rol` varchar(15) COLLATE utf8mb4_general_ci NOT NULL,
+  `ruta_foto` varchar(255) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT INTO `usuarios` (`id`, `nombre`, `nombre_usuario`, `contraseña`, `rol`) VALUES
-(1, 'Romani Moscoso, Anthony Paolo', 'antorm', 'alum123', 'Alumno'),
-(2, 'Ibarra Cabrera, Manuel Jesús', 'tutor', 'tutor123', 'Tutor'),
-(3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador');
+INSERT INTO `usuarios` (`id`, `nombre`, `nombre_usuario`, `contraseña`, `rol`, `ruta_foto`) VALUES
+(1, 'Romani Moscoso, Anthony Paolo', 'antorm', 'alum123', 'Alumno', 'http://localhost/foto_1.jpg'),
+(2, 'Ibarra Cabrera, Manuel Jesús', 'tutor', 'tutor123', 'Tutor', ''),
+(3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador', '');
 
 --
 -- Índices para tablas volcadas
@@ -171,19 +172,19 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `evidencia`
 --
 ALTER TABLE `evidencia`
-  MODIFY `id_evidencia` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_evidencia` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `tutoría`
 --
 ALTER TABLE `tutoría`
-  MODIFY `id_tutoria` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tutoria` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas
