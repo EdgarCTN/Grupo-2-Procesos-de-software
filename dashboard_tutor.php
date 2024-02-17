@@ -134,7 +134,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             </div>
             <ul>
                 <li><a href="dashboard_tutor.php">Inicio</a></li>
-                <li><a href="tutorias.php">Tutorías</a></li>
+                <li><a href="dashboard_tabla_profesor.php">Alumnos</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
