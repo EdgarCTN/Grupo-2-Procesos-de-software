@@ -4,6 +4,34 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: login.php');
     exit;
 }
+
+// Archivo de conexión a la base de datos
+include 'conn/connection.php';
+
+// Obtener el nombre de usuario de la sesión
+$nombre_usuario = $_SESSION['nombre'];
+
+try {
+    // Preparar la consulta SQL para obtener la ruta de la foto del usuario
+    $stmt = $conn->prepare("SELECT ruta_foto FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt->bindParam(':nombre_usuario', $nombre_usuario);
+
+    // Ejecutar la consulta
+    $stmt->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt->rowCount() > 0) {
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $ruta_foto = $resultado['ruta_foto'];
+    } else {
+        // Si el usuario no se encuentra, mostrar un mensaje de error o una imagen por defecto
+        $ruta_foto = "ruta/por/defecto/foto.jpg";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $ruta_foto = "ruta/error/foto.jpg"; // Otra ruta de una imagen de error
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -83,12 +111,28 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             background-color: #ecf0f1;
             padding: 20px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
         .welcome-message {
             margin-bottom: 20px;
             font-size: 24px;
             border-bottom: 2px solid #2c3e50;
             padding-bottom: 10px;
+            width: 100%;
+        }
+        .user-photo-container {
+            width: 200px; /* Tamaño del contenedor de la imagen */
+            height: 200px; /* Tamaño del contenedor de la imagen */
+            border-radius: 50%; /* Hacer el contenedor redondeado */
+            overflow: hidden; /* Ocultar las partes de la imagen fuera del contenedor */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra para efecto tridimensional */
+        }
+        .user-photo {
+            width: 100%; /* Hacer que la imagen llene completamente el contenedor */
+            height: auto; /* Altura automática para mantener la proporción */
+            border-radius: 50%; /* Hacer que la imagen sea circular */
         }
         .menu-toggle {
             position: absolute;
@@ -147,6 +191,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
+            <!-- Agregar la imagen del usuario -->
+            <div class="user-photo-container">
+                <!-- Imagen del usuario -->
+                <img src="<?php echo $ruta_foto; ?>" alt="Foto del usuario" class="user-photo">
+            </div>
         </div>
     </div>
     <div class="popup" id="popup">
