@@ -131,7 +131,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 <img src="fisi.png" alt="Logo Facultad">
             </div>
             <ul>
-                <li><a href="dashboard.php">Inicio</a></li>
+                <li><a href="dashboard_alumno.php">Inicio</a></li>
                 <li><a href="notas.php">Notas</a></li>
                 <li><a href="tutorias.php">Tutorías</a></li>
                 <li><a href="horario.php">Horario</a></li>
