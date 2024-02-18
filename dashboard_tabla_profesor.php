@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alumnos en Riesgo Académico</title>
+  <title>Alumnos observados</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.0/css/buttons.dataTables.min.css">
@@ -56,7 +56,7 @@
 
   <div class="container">
     <a href="dashboard_tutor.php" class="btn btn-primary btn-regresar">Volver</a> <!-- Botón de regresar -->
-    <h2 class="mt-4 mb-4">Alumnos en Riesgo Académico</h2>
+    <h2 class="mt-4 mb-4">Alumnos observados</h2>
     <div style="overflow-x:auto;">
       <table class="table table-striped" id="tablaAlumnos">
         <thead>
