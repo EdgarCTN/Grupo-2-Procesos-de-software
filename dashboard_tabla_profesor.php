@@ -70,34 +70,39 @@
         </thead>
         <tbody>
           <?php
-          //  datos de prueba de los alumnos en riesgo académico
-          $alumnos = array(
-            array("codigo" => "A001", "nombre" => "Alan", "apellido" => "Garcia", "email" => "Vivo@example.com"),
-            array("codigo" => "A001", "nombre" => "Edgar", "apellido" => "Tejeda ", "email" => "F@example.com"),
-            array("codigo" => "A001", "nombre" => "Romani ", "apellido" => "Anthony ", "email" => "F@example.com"),
-            array("codigo" => "A001", "nombre" => "Barrantes ", "apellido" => "Joshúa ", "email" => "F@example.com"),
-            array("codigo" => "A001", "nombre" => "Tataje ", "apellido" => "Kenner ", "email" => "F@example.com"),
-            array("codigo" => "A001", "nombre" => "Villanueva  ", "apellido" => "Cesar  ", "email" => "F@example.com"),
-            array("codigo" => "A001", "nombre" => "Serna ", "apellido" => "Andrew  ", "email" => "F@example.com"),
-            array("codigo" => "A004", "nombre" => "Mr", "apellido" => "Beast", "email" => "MrBeast@example.com"),
-            array("codigo" => "A000", "nombre" => "Goku", "apellido" => "Son", "email" => "DBZ@TOEI.com"),
-            array("codigo" => "A004", "nombre" => "NPC", "apellido" => "Nr1", "email" => "NPC1@example.com"),
-            array("codigo" => "A004", "nombre" => "NPC", "apellido" => "Nr2", "email" => "NPC2@example.com"),
-            array("codigo" => "A004", "nombre" => "NPC", "apellido" => "Nr3", "email" => "NP3@example.com")
+          // Conexión a la base de datos 
+          $servername = "localhost";
+          $username = "pma";
+          $password = "";
+          $dbname = "sma_unayoe";
 
+          //  conexión de base de datos
+          $conn = new mysqli($servername, $username, $password, $dbname);
 
-          );
-
-          //  tabla
-          foreach ($alumnos as $alumno) {
-            echo "<tr>";
-            echo "<td>{$alumno['codigo']}</td>";
-            echo "<td>{$alumno['nombre']}</td>";
-            echo "<td>{$alumno['apellido']}</td>";
-            echo "<td>{$alumno['email']}</td>";
-            echo "<td><a href=\"detalle_alumno.php?codigo={$alumno['codigo']}\" class=\"btn btn-primary\">Ver Detalles</a></td>";
-            echo "</tr>";
+          // Comprobación
+          if ($conn->connect_error) {
+              die("Conexión fallida: " . $conn->connect_error);
           }
+
+          // Consulta para obtener los datos de los alumnos
+          $sql = "SELECT cod_alumno, nombre, apellidos, correo FROM alumno";
+          $result = $conn->query($sql);
+
+          // Mostrar los datos en la tabla
+          if ($result->num_rows > 0) {
+              while($row = $result->fetch_assoc()) {
+                  echo "<tr>";
+                  echo "<td>{$row['cod_alumno']}</td>";
+                  echo "<td>{$row['nombre']}</td>";
+                  echo "<td>{$row['apellidos']}</td>";
+                  echo "<td>{$row['correo']}</td>";
+                  echo "<td><a href=\"detalle_alumno.php?codigo={$row['cod_alumno']}\" class=\"btn btn-primary\">Ver Detalles</a></td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "0 resultados";
+          }
+          $conn->close();
           ?>
         </tbody>
       </table>
