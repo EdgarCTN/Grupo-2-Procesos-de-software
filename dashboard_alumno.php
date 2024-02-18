@@ -124,24 +124,21 @@ try {
             width: 100%;
         }
         .user-photo-container {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            background-color: #455a64;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 300px; /* Ajuste para el espacio alrededor de la imagen */
+            height: 300px; /* Misma altura y ancho */
+            border-radius: 50%; /* Forma circular */
+            overflow: hidden; /* Recorta cualquier exceso fuera del círculo */
             margin-bottom: 20px;
             position: absolute;
-            top: 70px;
-            left: 20px;
+            top: 17%; /* Mover la imagen hacia arriba */
+            left: 40px;
         }
+
         .user-photo {
-            width: 100%;
-            height: auto;
-            border-radius: 50%;
+            width: 100%; /* Ocupa todo el contenedor */
+            height: 100%; /* Ocupa todo el contenedor */
+            object-fit: cover; /* Ajusta la imagen para mantener la forma circular */
+            border-radius: 50%; /* Forma circular */
         }
         .menu-toggle {
             position: absolute;
@@ -179,14 +176,14 @@ try {
             background-color: #455a64;
             border-radius: 10px;
             margin-bottom: 20px;
-            width: calc(50% - 5px); /* Ajuste para la separación */
+            width: calc(50% - 10px); /* Ajuste para la separación */
             height: 50vh;
         }
         /* Nuevos estilos para el rectángulo duplicado */
         .large-rectangle.duplicate {
             position: absolute;
             top: 80px; /* Misma posición que el rectángulo original */
-            left: calc(calc(50% + 1px)); /* Se ubica a la derecha del rectángulo original con la separación */
+            left: calc(50% + 10px); /* Se ubica a la derecha del rectángulo original con la separación */
         }
     </style>
 </head>
