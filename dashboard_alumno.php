@@ -114,6 +114,7 @@ try {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
+            position: relative;
         }
         .welcome-message {
             margin-bottom: 20px;
@@ -123,16 +124,24 @@ try {
             width: 100%;
         }
         .user-photo-container {
-            width: 200px; /* Tamaño del contenedor de la imagen */
-            height: 200px; /* Tamaño del contenedor de la imagen */
-            border-radius: 50%; /* Hacer el contenedor redondeado */
-            overflow: hidden; /* Ocultar las partes de la imagen fuera del contenedor */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Sombra para efecto tridimensional */
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            background-color: #455a64;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            position: absolute;
+            top: 70px;
+            left: 20px;
         }
         .user-photo {
-            width: 100%; /* Hacer que la imagen llene completamente el contenedor */
-            height: auto; /* Altura automática para mantener la proporción */
-            border-radius: 50%; /* Hacer que la imagen sea circular */
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
         }
         .menu-toggle {
             position: absolute;
@@ -166,6 +175,19 @@ try {
             margin: 0 10px;
             cursor: pointer;
         }
+        .large-rectangle {
+            background-color: #455a64;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: calc(50% - 5px); /* Ajuste para la separación */
+            height: 50vh;
+        }
+        /* Nuevos estilos para el rectángulo duplicado */
+        .large-rectangle.duplicate {
+            position: absolute;
+            top: 80px; /* Misma posición que el rectángulo original */
+            left: calc(calc(50% + 1px)); /* Se ubica a la derecha del rectángulo original con la separación */
+        }
     </style>
 </head>
 <body>
@@ -191,6 +213,10 @@ try {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
+            <!-- Rectángulo grande que ocupa la mitad del espacio disponible -->
+            <div class="large-rectangle"></div>
+            <!-- Rectángulo duplicado -->
+            <div class="large-rectangle duplicate"></div>
             <!-- Agregar la imagen del usuario -->
             <div class="user-photo-container">
                 <!-- Imagen del usuario -->
