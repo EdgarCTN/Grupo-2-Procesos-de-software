@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-02-2024 a las 20:19:03
+-- Tiempo de generación: 20-02-2024 a las 00:15:14
 -- Versión del servidor: 8.0.35
 -- Versión de PHP: 8.2.12
 
@@ -36,6 +36,36 @@ CREATE TABLE `alumno` (
   `facultad` varchar(50) COLLATE utf8mb4_general_ci NOT NULL,
   `numero_celular` varchar(10) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `alumno`
+--
+
+INSERT INTO `alumno` (`cod_alumno`, `id_usuario`, `nombre`, `apellidos`, `correo`, `facultad`, `numero_celular`) VALUES
+('22200845', 1, 'Anthony Paolo', 'Romani Moscoso', 'ejemplo@correo.com', 'FISI', '965841231');
+
+--
+-- Disparadores `alumno`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_alumno` BEFORE INSERT ON `alumno` FOR EACH ROW BEGIN
+    DECLARE v_nombre_apellidos VARCHAR(255);
+    DECLARE v_nombre VARCHAR(255);
+    DECLARE v_apellidos VARCHAR(255);
+    
+    -- Obtener el nombre completo del usuario a insertar en la tabla alumno
+    SELECT nombre INTO v_nombre FROM usuarios WHERE id = NEW.id_usuario;
+    
+    -- Separar el nombre completo en apellidos y nombres
+    SET v_apellidos = SUBSTRING_INDEX(v_nombre, ',', 1);
+    SET v_nombre = TRIM(SUBSTRING_INDEX(v_nombre, ',', -1));
+    
+    -- Actualizar las columnas apellidos y nombre en la fila a insertar en la tabla alumno
+    SET NEW.apellidos = v_apellidos;
+    SET NEW.nombre = v_nombre;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -117,6 +147,20 @@ INSERT INTO `usuarios` (`id`, `nombre`, `nombre_usuario`, `contraseña`, `rol`, 
 (1, 'Romani Moscoso, Anthony Paolo', 'antorm', 'alum123', 'Alumno', 'http://localhost/foto_1.jpg'),
 (2, 'Ibarra Cabrera, Manuel Jesús', 'tutor', 'tutor123', 'Tutor', ''),
 (3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador', '');
+
+--
+-- Disparadores `usuarios`
+--
+DELIMITER $$
+CREATE TRIGGER `actualizar_alumno_desde_usuarios` AFTER INSERT ON `usuarios` FOR EACH ROW BEGIN
+    UPDATE alumno
+    SET 
+        apellidos = SUBSTRING_INDEX(NEW.nombre, ',', 1), -- Extraer los apellidos antes de la coma
+        nombre = TRIM(SUBSTRING_INDEX(NEW.nombre, ',', -1)) -- Extraer los nombres después de la coma y quitar espacios en blanco al inicio
+    WHERE id_usuario = NEW.id;
+END
+$$
+DELIMITER ;
 
 --
 -- Índices para tablas volcadas
