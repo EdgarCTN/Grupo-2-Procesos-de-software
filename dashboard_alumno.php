@@ -32,11 +32,57 @@ try {
     $ruta_foto = "ruta/error/foto.jpg"; // Otra ruta de una imagen de error
 }
 
+try {
+    // Preparar la consulta SQL para obtener el ID del usuario basado en el nombre de usuario
+    $stmt_usuario = $conn->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt_usuario->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_usuario->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt_usuario->rowCount() > 0) {
+        $resultado_usuario = $stmt_usuario->fetch(PDO::FETCH_ASSOC);
+        $id_usuario = $resultado_usuario['id'];
+
+        // Preparar la consulta SQL para obtener los datos del alumno usando el ID del usuario
+        $stmt_alumno = $conn->prepare("SELECT cod_alumno, apellidos, nombre, facultad FROM alumno WHERE id_usuario = :id_usuario");
+        $stmt_alumno->bindParam(':id_usuario', $id_usuario);
+        $stmt_alumno->execute();
+
+        // Verificar si se encontró el alumno
+        if ($stmt_alumno->rowCount() > 0) {
+            $resultado_alumno = $stmt_alumno->fetch(PDO::FETCH_ASSOC);
+            $cod_alumno = $resultado_alumno['cod_alumno'];
+            $apellidos = $resultado_alumno['apellidos'];
+            $nombre = $resultado_alumno['nombre'];
+            $facultad = $resultado_alumno['facultad'];
+        } else {
+            // Si el alumno no se encuentra, mostrar un mensaje de error o asignar valores por defecto
+            $cod_alumno = "No disponible";
+            $apellidos = "No disponible";
+            $nombre = "No disponible";
+            $facultad = "No disponible";
+        }
+    } else {
+        // Si no se encuentra el usuario, mostrar un mensaje de error o asignar valores por defecto
+        $cod_alumno = "No disponible";
+        $apellidos = "No disponible";
+        $nombre = "No disponible";
+        $facultad = "No disponible";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $cod_alumno = "Error";
+    $apellidos = "Error";
+    $nombre = "Error";
+    $facultad = "Error";
+}
+
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
@@ -133,7 +179,11 @@ try {
             top: 17%; /* Mover la imagen hacia arriba */
             left: 40px;
         }
-
+        .alumno-info-container {
+            position: absolute;
+            top: 17%;
+            left: 400px; /* Ajusta este valor según sea necesario */
+        }
         .user-photo {
             width: 100%; /* Ocupa todo el contenedor */
             height: 100%; /* Ocupa todo el contenedor */
@@ -185,6 +235,38 @@ try {
             top: 80px; /* Misma posición que el rectángulo original */
             left: calc(50% + 10px); /* Se ubica a la derecha del rectángulo original con la separación */
         }
+        /* Estilos para los datos del alumno */
+        .alumno-info p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 30px;
+            font-weight: bold; /* Asegúrate de especificar el peso de la fuente como 'bold' para la versión negrita */
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        /* Estilos para el título "Datos del estudiante" */
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+            position: absolute;
+            top: -40px; /* Mover el título hacia arriba */
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Color de fondo semitransparente */
+            padding: 10px 20px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        /* Estilos para el contenedor de texto */
+        .text-container {
+            background-color: #607d8b; /* Color de fondo */
+            color: #fff; /* Color del texto */
+            padding: 8px; /* Espaciado interno */
+            border-radius: 10px; /* Esquinas redondeadas */
+            margin-bottom: 10px; /* Espaciado inferior */
+            font-size: 22px; /* Tamaño de fuente */
+            font-weight: bold; /* Negrita */
+        }
     </style>
 </head>
 <body>
@@ -218,6 +300,19 @@ try {
             <div class="user-photo-container">
                 <!-- Imagen del usuario -->
                 <img src="<?php echo $ruta_foto; ?>" alt="Foto del usuario" class="user-photo">
+            </div>
+            <div class="alumno-info-container">
+                <div class="alumno-info">
+                    <!-- Agregar el título "Datos del estudiante" -->
+                    <div class="title">Datos del estudiante</div>
+                    <!-- Agregar el contenedor de texto -->
+                    <div class="text-container">
+                        <p>Código: <?php echo $cod_alumno; ?></p>
+                        <p>Apellidos: <?php echo $apellidos; ?></p>
+                        <p>Nombre: <?php echo $nombre; ?></p>
+                        <p>Facultad: <?php echo $facultad; ?></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
