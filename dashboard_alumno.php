@@ -77,6 +77,24 @@ try {
     $facultad = "Error";
 }
 
+try {
+    // Generar un número aleatorio entre 1 y 30
+    $random_id = rand(1, 30);
+    
+    // Consultar la base de datos para obtener la frase motivadora aleatoria
+    $stmt = $conn->prepare("SELECT frase FROM frases_motivadoras WHERE id = :id");
+    $stmt->bindParam(':id', $random_id);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $frase_motivadora = $stmt->fetch(PDO::FETCH_ASSOC)['frase'];
+    } else {
+        $frase_motivadora = "No hay frase disponible en este momento.";
+    }
+} catch(PDOException $e) {
+    $frase_motivadora = "Error al obtener la frase motivadora.";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -235,6 +253,34 @@ try {
             top: 80px; /* Misma posición que el rectángulo original */
             left: calc(50% + 10px); /* Se ubica a la derecha del rectángulo original con la separación */
         }
+        .large-rectangle.new {
+            background-color: #f9e46e;
+            border: 4px solid #ffd700; /* Borde amarillo un poco más fuerte */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            width: calc(70% - 10px); /* Ajuste para la separación y aumento del ancho */
+            height: 35vh; /* Altura reducida */
+            position: relative; /* Cambiado a relative */
+            bottom: 0px; /* Posición un poco más abajo */
+            left: 50%; /* Centrado horizontalmente */
+            transform: translateX(-50%); /* Centrado horizontalmente */
+        }
+
+        .large-rectangle.new::before {
+            content: ""; /* Contenido vacío necesario para que se muestre la pseudo-clase */
+            background-image: url('http://localhost/icono_cerebro.png');
+            background-size: cover; /* Ajusta la imagen para que cubra todo el espacio */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-position: center; /* Centra la imagen */
+            position: absolute;
+            top: 50%; /* Centra verticalmente */
+            left: -100px; /* Ajusta para posicionar desde el borde izquierdo */
+            transform: translateY(-50%); /* Centra verticalmente */
+            width: 200px; /* Ancho de la imagen */
+            height: 200px; /* Alto de la imagen */
+        }
+
+
         /* Estilos para los datos del alumno */
         .alumno-info p {
             font-family: 'Roboto', sans-serif;
@@ -267,6 +313,23 @@ try {
             font-size: 22px; /* Tamaño de fuente */
             font-weight: bold; /* Negrita */
         }
+        /* Estilos para la frase motivadora */
+        .motivational-quote {
+            font-size: 60px;
+            color: #455a64;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: calc(100% - 40px); /* Ancho igual al 100% del contenedor menos el espacio de los márgenes */
+            max-width: calc(95% - 40px); /* Máximo ancho igual al 70% del contenedor menos el espacio de los márgenes */
+            padding: 0 20px; /* Añadido para dar espacio entre el texto y los bordes del contenedor */
+            box-sizing: border-box; /* Hace que el padding no afecte al ancho total */
+            
+        }
     </style>
 </head>
 <body>
@@ -296,7 +359,13 @@ try {
             <div class="large-rectangle"></div>
             <!-- Rectángulo duplicado -->
             <div class="large-rectangle duplicate"></div>
-            <!-- Agregar la imagen del usuario -->
+            <!-- Nuevo rectángulo adicional -->
+            <div class="large-rectangle new">
+                <!-- Frase motivadora -->
+                <div class="motivational-quote">
+                    <?php echo $frase_motivadora; ?>
+                </div>
+            </div>
             <div class="user-photo-container">
                 <!-- Imagen del usuario -->
                 <img src="<?php echo $ruta_foto; ?>" alt="Foto del usuario" class="user-photo">
