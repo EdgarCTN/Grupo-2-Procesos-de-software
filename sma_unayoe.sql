@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-02-2024 a las 00:15:14
+-- Tiempo de generación: 20-02-2024 a las 19:31:44
 -- Versión del servidor: 8.0.35
 -- Versión de PHP: 8.2.12
 
@@ -42,6 +42,7 @@ CREATE TABLE `alumno` (
 --
 
 INSERT INTO `alumno` (`cod_alumno`, `id_usuario`, `nombre`, `apellidos`, `correo`, `facultad`, `numero_celular`) VALUES
+('22200309', 4, 'Andrew Gabriel', 'Serna Quiroz', 'andrew.serna@unmsm.edu.pe', 'FISI', '999040445'),
 ('22200845', 1, 'Anthony Paolo', 'Romani Moscoso', 'ejemplo@correo.com', 'FISI', '965841231');
 
 --
@@ -96,6 +97,53 @@ CREATE TABLE `evidencia` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `frases_motivadoras`
+--
+
+CREATE TABLE `frases_motivadoras` (
+  `id` int NOT NULL,
+  `frase` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `frases_motivadoras`
+--
+
+INSERT INTO `frases_motivadoras` (`id`, `frase`) VALUES
+(1, 'El éxito no es definitivo, el fracaso no es fatal: lo que cuenta es el coraje para continuar.'),
+(2, 'Cree en ti mismo y todo será posible.'),
+(3, 'El único modo de hacer un gran trabajo es amar lo que haces.'),
+(4, 'No te detengas hasta que estés orgulloso.'),
+(5, 'Cada logro comienza con la decisión de intentarlo.'),
+(6, 'La mejor manera de predecir el futuro es crearlo.'),
+(7, 'El éxito es la suma de pequeños esfuerzos repetidos día tras día.'),
+(8, 'Los desafíos son lo que hacen la vida interesante. Superarlos es lo que hace la vida significativa.'),
+(9, 'El fracaso es la oportunidad de comenzar de nuevo, pero esta vez de forma más inteligente.'),
+(10, 'No importa cuántas veces te caigas, lo que cuenta es cuántas veces te levantas.'),
+(11, 'El futuro pertenece a aquellos que creen en la belleza de sus sueños.'),
+(12, 'La única forma de hacer un gran trabajo es amar lo que haces.'),
+(13, 'Si no te gusta algo, cámbialo. Si no puedes cambiarlo, cambia tu actitud.'),
+(14, 'El éxito no es la clave de la felicidad. La felicidad es la clave del éxito.'),
+(15, 'No te limites a soñar, trabaja duro para hacer realidad tus sueños.'),
+(16, 'La diferencia entre lo imposible y lo posible radica en la determinación de una persona.'),
+(17, 'El único lugar donde el éxito viene antes que el trabajo es en el diccionario.'),
+(18, 'Nunca te des por vencido en algo que realmente te importa.'),
+(19, 'El verdadero éxito es ser feliz con lo que eres y lo que tienes.'),
+(20, 'La vida es 10% lo que me pasa y 90% cómo reacciono a ello.'),
+(21, 'Cree que puedes y ya estás a medio camino.'),
+(22, 'No dejes que tus miedos ocupen el lugar de tus sueños.'),
+(23, 'El secreto del éxito es comenzar antes de estar listo.'),
+(24, 'El optimismo es la fe que conduce al logro.'),
+(25, 'La verdadera medida de tu éxito es la cantidad de veces que puedes volver a levantarte después de la caída.'),
+(26, 'No esperes la oportunidad, créala.'),
+(27, 'La mente es todo; lo que piensas, te conviertes.'),
+(28, 'El éxito es encontrar satisfacción en dar un paso cada día hacia adelante hacia un objetivo significativo.'),
+(29, 'El único límite para tu realización de mañana será tus dudas de hoy.'),
+(30, 'El único camino hacia el éxito es a través de la autodisciplina.');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tutor`
 --
 
@@ -146,7 +194,8 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`id`, `nombre`, `nombre_usuario`, `contraseña`, `rol`, `ruta_foto`) VALUES
 (1, 'Romani Moscoso, Anthony Paolo', 'antorm', 'alum123', 'Alumno', 'http://localhost/foto_1.jpg'),
 (2, 'Ibarra Cabrera, Manuel Jesús', 'tutor', 'tutor123', 'Tutor', ''),
-(3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador', '');
+(3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador', ''),
+(4, 'Serna Quiroz, Andrew Gabriel', 'sernak', 'alum321', 'Alumno', 'http://localhost/foto_2.jpg');
 
 --
 -- Disparadores `usuarios`
@@ -187,6 +236,12 @@ ALTER TABLE `evidencia`
   ADD KEY `idtutoria` (`idtutoria`);
 
 --
+-- Indices de la tabla `frases_motivadoras`
+--
+ALTER TABLE `frases_motivadoras`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `tutor`
 --
 ALTER TABLE `tutor`
@@ -219,6 +274,12 @@ ALTER TABLE `evidencia`
   MODIFY `id_evidencia` int NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `frases_motivadoras`
+--
+ALTER TABLE `frases_motivadoras`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
 -- AUTO_INCREMENT de la tabla `tutoría`
 --
 ALTER TABLE `tutoría`
@@ -228,7 +289,7 @@ ALTER TABLE `tutoría`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas
