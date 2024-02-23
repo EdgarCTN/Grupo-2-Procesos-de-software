@@ -18,7 +18,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             margin: 0;
             padding: 0;
             background-color: #1e272e; /* Cambiar el color de fondo a azul oscuro */
-            
         }
         .container {
             display: flex;
@@ -92,6 +91,59 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             padding-bottom: 10px;
             color: #fff; /* Cambiar el color del texto a blanco */
         }
+        .status-summary {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 20px;
+            color: #fff; /* Cambiar el color del texto a blanco */
+        }
+        .status-summary h3 {
+            font-size: 1.5em; /* Ajustar el tamaño del encabezado */
+            margin-bottom: 10px;
+        }
+        .status-summary p {
+            font-size: 18px; /* Ajustar el tamaño del texto del resumen */
+            margin: 10px 0;
+        }
+        .status-summary p span {
+            font-weight: bold;
+            color: #3498db; /* Cambiar el color del número */
+        }
+        .status-summary .details {
+            margin-top: 15px;
+            border-top: 1px solid #34495e;
+            padding-top: 15px;
+            font-size: 16px;
+        }
+        .course-table {
+            margin-top: 20px;
+        }
+        .course-table table {
+            width: 50%;
+            border-collapse: collapse;
+        }
+        .course-table th, .course-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .course-table th {
+            background-color: #3498db;
+            color: #fff; /* Cambiar el color del texto a blanco */
+        }
+        .course-table td {
+            background-color: #ecf0f1;
+            color: #000; /* Cambiar el color del texto a negro */
+        }
+        .course-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .course-table tr:first-child th {
+            background-color: #5DADE2; /* Celeste */
+        }
+        .course-table tr:first-child th {
+            color: #fff; /* Blanco */
+        }
         .menu-toggle {
             position: absolute;
             top: 10px;
@@ -126,6 +178,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         }
     </style>
 </head>
+    
 <body>
     <div class="container">
         <div class="sidebar" id="sidebar">
@@ -142,6 +195,30 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             <?php
             if (isset($_SESSION['nombre'])) {
                 echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] . "</div>";
+
+                // Bienvenida al tutor
+                echo "<div class='welcome-message'>Sistema de ayuda para alumnos observados!</div>";
+
+                // Resumen del estado actual
+                echo "<div class='status-summary'>";
+                echo "<h3>Resumen del estado actual:</h3>";
+                echo "<p>Total de alumnos: <span>XX</span></p>";
+                echo "<p>Alumnos con 2 repitencias: <span>XX</span></p>";
+                echo "<p>Alumnos con 3 repitencias (aunque no trabajamos con numero de repitencias XD): <span>XX</span></p>";
+                // Puedes agregar más detalles según sea necesario
+                echo "<div class='details'><h3>Distribución de alumnos";
+                echo "</div>";
+
+                // Agregar la tabla de cursos y número de alumnos
+                echo "<div class='course-table'>";
+                echo "<table>";
+                echo "<tr><th>Nombre del curso</th><th>Ciclo </th><th>Número de alumnos</th></tr>";
+                echo "<tr><td>Procesos de software</td><td>4</td><td>6</td></tr>"; // Ejemplo de ciclo y datos
+                echo "<tr><td>Curso X</td><td>5</td><td>30</td></tr>"; // Ejemplo de ciclo y datos
+                // Puedes agregar más filas según sea necesario
+                echo "</table>";
+                echo "</div>";
+
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
@@ -165,15 +242,12 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('closed');
         }
-
         function showPopup() {
             document.getElementById('popup').style.display = 'block';
         }
-
         function hidePopup() {
             document.getElementById('popup').style.display = 'none';
         }
-
         function confirmLogout() {
             // Redirigir al usuario al login
             window.location.href = 'login.php';
