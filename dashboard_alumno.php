@@ -341,7 +341,7 @@ try {
             <ul>
                 <li><a href="dashboard_alumno.php">Inicio</a></li>
                 <li><a href="notas.php">Notas</a></li>
-                <li><a href="tutorias.php">Tutorías</a></li>
+                <li><a href="dashboard_tutorias.php">Tutorías</a></li>
                 <li><a href="horario.php">Horario</a></li>
                 <li><a href="objetivos.php">Objetivos</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
