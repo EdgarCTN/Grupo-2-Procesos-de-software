@@ -4,6 +4,78 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header('Location: login.php');
     exit;
 }
+// Archivo de conexión a la base de datos
+include 'conn/connection.php';
+
+// Obtener el nombre de usuario de la sesión
+$nombre_usuario = $_SESSION['nombre'];
+
+try {
+    // Preparar la consulta SQL para obtener la ruta de la foto del usuario
+    $stmt = $conn->prepare("SELECT ruta_foto FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt->bindParam(':nombre_usuario', $nombre_usuario);
+
+    // Ejecutar la consulta
+    $stmt->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt->rowCount() > 0) {
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $ruta_foto = $resultado['ruta_foto'];
+    } else {
+        // Si el usuario no se encuentra, mostrar un mensaje de error o una imagen por defecto
+        $ruta_foto = "ruta/por/defecto/foto.jpg";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $ruta_foto = "ruta/error/foto.jpg"; // Otra ruta de una imagen de error
+}
+
+try {
+    // Preparar la consulta SQL para obtener el ID del usuario basado en el nombre de usuario
+    $stmt_usuario = $conn->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt_usuario->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_usuario->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt_usuario->rowCount() > 0) {
+        $resultado_usuario = $stmt_usuario->fetch(PDO::FETCH_ASSOC);
+        $id_usuario = $resultado_usuario['id'];
+
+        // Preparar la consulta SQL para obtener los datos del tutor usando el ID del usuario
+        $stmt_tutor = $conn->prepare("SELECT cod_tutor, apellidos, nombre, correo, numero_celular FROM tutor WHERE id_usuario = :id_usuario");
+        $stmt_tutor->bindParam(':id_usuario', $id_usuario);
+        $stmt_tutor->execute();
+
+        // Verificar si se encontró el tutor
+        if ($stmt_tutor->rowCount() > 0) {
+            $resultado_tutor = $stmt_tutor->fetch(PDO::FETCH_ASSOC);
+            $cod_tutor = $resultado_tutor['cod_tutor'];
+            $apellidos = $resultado_tutor['apellidos'];
+            $nombre = $resultado_tutor['nombre'];
+            $correo = $resultado_tutor['correo'];
+        } else {
+            // Si el tutor no se encuentra, mostrar un mensaje de error o asignar valores por defecto
+            $cod_tutor = "No se ha asignado un tutor al id del usuario";
+            $apellidos = "No se ha asignado un tutor al id del usuario";
+            $nombre = "No se ha asignado un tutor al id del usuario";
+            $correo = "No se ha asignado un tutor al id del usuario";
+        }
+    } else {
+        // Si no se encuentra el usuario, mostrar un mensaje de error o asignar valores por defecto
+        $cod_tutor = "No disponible";
+        $apellidos = "No disponible";
+        $nombre = "No disponible";
+        $correo = "No disponible";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $cod_tutor = "Error";
+    $apellidos = "Error";
+    $nombre = "Error";
+    $correo = "Error";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -12,174 +84,11 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #1e272e; /* Cambiar el color de fondo a azul oscuro */
-        }
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .sidebar {
-            background-color: #2c3e50;
-            color: #fff;
-            padding: 20px;
-            width: 200px;
-            transition: width 0.5s;
-            overflow-x: hidden;
-        }
-        .sidebar.closed {
-            width: 60px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0.5s;
-        }
-        .sidebar.closed ul {
-            visibility: hidden;
-            opacity: 0;
-        }
-        .sidebar li {
-            margin-bottom: 15px;
-        }
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            display: block;
-            padding: 10px 15px;
-            border-radius: 10px;
-            transition: background-color 0.3s;
-            background-color: #455a64;
-        }
-        .sidebar a:hover {
-            background-color: #607d8b;
-        }
-        .sidebar-logo {
-            text-align: center;
-            margin-bottom: 20px;
-            transition: all 0.5s;
-        }
-        .sidebar-logo img {
-            max-width: 150px;
-            margin-top: 30px;
-            transition: all 0.5s;
-        }
-        .sidebar.closed .sidebar-logo {
-            margin-bottom: 10px;
-        }
-        .sidebar.closed .sidebar-logo img {
-            max-width: 50px;
-        }
-        .main-content {
-            background-color: #1e272e; /* Cambiar el color de fondo a azul oscuro */
-            padding: 20px;
-            flex: 1;
-        }
-        .welcome-message {
-            margin-bottom: 20px;
-            font-size: 24px;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 10px;
-            color: #fff; /* Cambiar el color del texto a blanco */
-        }
-        .status-summary {
-            margin-bottom: 20px;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 20px;
-            color: #fff; /* Cambiar el color del texto a blanco */
-        }
-        .status-summary h3 {
-            font-size: 1.5em; /* Ajustar el tamaño del encabezado */
-            margin-bottom: 10px;
-        }
-        .status-summary p {
-            font-size: 18px; /* Ajustar el tamaño del texto del resumen */
-            margin: 10px 0;
-        }
-        .status-summary p span {
-            font-weight: bold;
-            color: #3498db; /* Cambiar el color del número */
-        }
-        .status-summary .details {
-            margin-top: 15px;
-            border-top: 1px solid #34495e;
-            padding-top: 15px;
-            font-size: 16px;
-        }
-        .course-table {
-            margin-top: 20px;
-        }
-        .course-table table {
-            width: 50%;
-            border-collapse: collapse;
-        }
-        .course-table th, .course-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .course-table th {
-            background-color: #3498db;
-            color: #fff; /* Cambiar el color del texto a blanco */
-        }
-        .course-table td {
-            background-color: #ecf0f1;
-            color: #000; /* Cambiar el color del texto a negro */
-        }
-        .course-table tr:hover {
-            background-color: #f5f5f5;
-        }
-        .course-table tr:first-child th {
-            background-color: #5DADE2; /* Celeste */
-        }
-        .course-table tr:first-child th {
-            color: #fff; /* Blanco */
-        }
-        .menu-toggle {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            cursor: pointer;
-        }
-        .menu-toggle img {
-            width: 30px;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-        }
-        .popup-content {
-            text-align: center;
-        }
-        .popup-buttons {
-            margin-top: 20px;
-        }
-        .popup-buttons button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/style_Tutor.css"><!-- Aquí se agrega el enlace al archivo CSS -->
 </head>
     
 <body>
+
     <div class="container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
@@ -188,24 +97,38 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
             <ul>
                 <li><a href="dashboard_tutor.php">Inicio</a></li>
                 <li><a href="dashboard_tabla_profesor.php">Alumnos</a></li>
-                <li><a href="dashboard_tutorias_profesor.php">Tutorias</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] . "</div>";
+                echo "<div class='welcome-message'>Bienvenido, " . $nombre_usuario . "</div>";
 
-                // Bienvenida al tutor
-                echo "<div class='welcome-message'>Sistema de ayuda para alumnos observados!</div>";
+                // Bienvenida al usuario
+                echo "<div class='welcome-message'>Sistema de monitoreo de alumnos observados</div>";
+
+                // Mostrar información del tutor
+                echo "<div class='tutor-info card'>";
+                echo "<div class='card-header'><h3>Información del Tutor:</h3></div>";
+                echo "<div class='card-body'>";
+                echo "<p>Código de Tutor: <span>$cod_tutor</span></p>";
+                echo "<p>Nombre: <span>$nombre</span></p>";
+                echo "<p>Apellidos: <span>$apellidos</span></p>";
+                echo "<p>Correo: <span>$correo</span></p>";
+                echo "</div>";
+                echo "</div>";
 
                 // Resumen del estado actual
-                echo "<div class='status-summary'>";
-                echo "<h3>Resumen del estado actual:</h3>";
+                echo "<div class='status-summary card'>";
+                echo "<div class='card-header'><h3>Resumen del estado actual:</h3></div>";
+                echo "<div class='card-body'>";
                 echo "<p>Total de alumnos: <span>XX</span></p>";
                 echo "<p>Alumnos con 2 repitencias: <span>XX</span></p>";
-                echo "<p>Alumnos con 3 repitencias (aunque no trabajamos con numero de repitencias XD): <span>XX</span></p>";
+                echo "<p>Alumnos con 3 repitencias (aunque no trabajamos con número de repitencias XD): <span>XX</span></p>";
+                echo "</div>";
+                echo "</div>";
+
                 // Puedes agregar más detalles según sea necesario
                 echo "<div class='details'><h3>Distribución de alumnos";
                 echo "</div>";
@@ -218,6 +141,8 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                 echo "<tr><td>Curso X</td><td>5</td><td>30</td></tr>"; // Ejemplo de ciclo y datos
                 // Puedes agregar más filas según sea necesario
                 echo "</table>";
+                echo "</div>";
+                echo "</div>";
                 echo "</div>";
 
             } else {
