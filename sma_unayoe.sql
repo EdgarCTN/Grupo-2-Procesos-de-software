@@ -156,6 +156,36 @@ CREATE TABLE `tutor` (
   `numero_celular` varchar(10) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tutor`
+--
+
+INSERT INTO `tutor` (`cod_tutor`, `id_usuario`, `nombre`, `apellidos`, `correo`, `numero_celular`) VALUES
+('15647852', 2, 'Manuel Jesús', 'Ibarra Cabrera', 'tutor@correo.com', '989475123');
+
+--
+-- Disparadores `tutor`
+--
+DELIMITER $$
+CREATE TRIGGER `before_insert_tutor` BEFORE INSERT ON `tutor` FOR EACH ROW BEGIN
+    DECLARE v_nombre_apellidos VARCHAR(255);
+    DECLARE v_nombre VARCHAR(255);
+    DECLARE v_apellidos VARCHAR(255);
+    
+    -- Obtener el nombre completo del usuario a insertar en la tabla tutor
+    SELECT nombre INTO v_nombre FROM usuarios WHERE id = NEW.id_usuario;
+    
+    -- Separar el nombre completo en apellidos y nombres
+    SET v_apellidos = SUBSTRING_INDEX(v_nombre, ',', 1);
+    SET v_nombre = TRIM(SUBSTRING_INDEX(v_nombre, ',', -1));
+    
+    -- Actualizar las columnas apellidos y nombre en la fila a insertar en la tabla tutor
+    SET NEW.apellidos = v_apellidos;
+    SET NEW.nombre = v_nombre;
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
