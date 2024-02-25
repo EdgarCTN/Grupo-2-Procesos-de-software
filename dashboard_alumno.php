@@ -95,6 +95,58 @@ try {
     $frase_motivadora = "Error al obtener la frase motivadora.";
 }
 
+try {
+    // Preparar la consulta SQL para obtener los datos de la tutoría del alumno
+    $stmt_tutoria = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
+                                    FROM tutoría AS t
+                                    INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                    INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                    INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                    INNER JOIN usuarios AS u ON a.id_usuario = u.id
+                                    WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_tutoria->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_tutoria->execute();
+
+    // Verificar si se encontraron tutorías para el estudiante
+    if ($stmt_tutoria->rowCount() > 0) {
+        $resultado_tutoria = $stmt_tutoria->fetch(PDO::FETCH_ASSOC);
+        $fecha_tutoria = "<span class='texto'><strong>Fecha:</strong></span> " . $resultado_tutoria['fecha'];
+        $hora_tutoria = "<span class='texto'><strong>Hora:</strong></span> " . $resultado_tutoria['hora'];
+        $tema_tutoria = "<span class='texto'><strong>Tema:</strong></span> " . $resultado_tutoria['tema'];
+        $nombre_curso = $resultado_tutoria['nombre_curso'];
+        $apellidos_tutor = "<span class='texto'><strong>Tutor:</strong></span> " . $resultado_tutoria['apellidos'];
+        $nombre_tutor = "<span class='texto'><strong>Tutor:</strong></span> " . $resultado_tutoria['nombre'];
+    } else {
+        // Si no se encontraron tutorías, mostrar un mensaje o asignar valores por defecto
+        $fecha_tutoria = "No hay tutorías programadas";
+        $hora_tutoria = "";
+        $tema_tutoria = "";
+        $nombre_curso = "";
+        $apellidos_tutor = "";
+        $nombre_tutor = "";
+    }
+
+    // Preparar la consulta SQL para obtener la lista de tutorías del mismo alumno
+    $stmt_lista_tutorias = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
+                                           FROM tutoría AS t
+                                           INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                           INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                           WHERE t.codalumno = (SELECT codalumno FROM alumno WHERE id_usuario = :id_usuario)");
+    $stmt_lista_tutorias->bindParam(':id_usuario', $id_usuario);
+    $stmt_lista_tutorias->execute();
+
+    // Guardar las tutorías del alumno en un array
+    $tutorias = $stmt_lista_tutorias->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $fecha_tutoria = "Error al obtener las tutorías";
+    $hora_tutoria = "";
+    $tema_tutoria = "";
+    $nombre_curso = "";
+    $apellidos_tutor = "";
+    $nombre_tutor = "";
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -253,6 +305,18 @@ try {
             top: 80px; /* Misma posición que el rectángulo original */
             left: calc(50% + 10px); /* Se ubica a la derecha del rectángulo original con la separación */
         }
+
+        .center-square {
+            position: absolute;
+            top: calc(50% - 375px); /* Mitad de la altura del contenedor menos la mitad del alto del cuadrado */
+            left: calc(50% + 10px + 18vh); /* Ajuste de la mitad del ancho del cuadrado más el espacio entre los rectángulos */
+            width: 500px; /* Ancho del cuadrado */
+            height: 400px; /* Alto del cuadrado */
+            background-color: #FFEFD5; /* Color de fondo del cuadrado */
+            border: 2px solid #FF4500; /* Borde del cuadrado */
+        }
+
+        
         .large-rectangle.new {
             background-color: #f9e46e;
             border: 4px solid #ffd700; /* Borde amarillo un poco más fuerte */
@@ -330,8 +394,85 @@ try {
             box-sizing: border-box; /* Hace que el padding no afecte al ancho total */
             
         }
-    </style>
+
+        /* Estilos para el nombre del curso */
+        .curso {
+            font-weight: bold; /* Negrita */
+            color: #455a64; /* Color blanco para el nombre del curso */
+            margin-left: 20px;
+            overflow: hidden; /* Oculta cualquier contenido que sobresalga del contenedor */
+            text-overflow: ellipsis; /* Agrega puntos suspensivos (...) al final del texto si es demasiado largo */
+            max-width: 300px; /* Establece el ancho máximo del contenedor */
+            font-size: 28px;
+        }
+
+        /* Estilos para los datos de la tutoría */
+        .texto {
+            font-size: 28px; /* Tamaño del texto */
+            font-weight: bold; /* Negrita */
+            margin-left: 20px; /* Ajusta el margen izquierdo según sea necesario */
+        }
+
+        /* Estilos para el botón "Ir a la Tutoría" */
+        .boton-tutoria {
+            background-color: #455a64; /* Color de fondo */
+            color: #fff; /* Color del texto */
+            font-size: 28px; /* Tamaño de la fuente */
+            font-weight: bold; /* Negrita */
+            padding: 20px 40px; /* Espaciado interno aumentado */
+            border: none; /* Sin borde */
+            border-radius: 5px; /* Esquinas redondeadas */
+            cursor: pointer; /* Cursor al pasar el mouse */
+            transition: background-color 0.3s; /* Transición de color de fondo */
+            margin-top: 20px; /* Margen superior */
+            display: block; /* Convertir en bloque para centrar */
+            margin-left: auto; /* Centrar horizontalmente */
+            margin-right: auto; /* Centrar horizontalmente */
+        }
+
+        /* Estilos para el contenedor de los botones de flecha */
+        .arrow-buttons-container {
+            position: relative; /* Cambiado a relativo */
+            margin-top: 20px; /* Espacio entre el cuadrado y los botones de flecha */
+            width: 100%; /* Ancho igual al 100% del contenedor */
+        }
+
+        /* Estilos para los botones de flecha */
+        .arrow-button {
+            font-size: 24px; /* Tamaño de la flecha */
+            color: #FF4500; /* Color de la flecha */
+            cursor: pointer;
+            transition: color 0.3s;
+            width: 50px; /* Ancho del botón */
+            height: 50px; /* Alto del botón */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%; /* Forma circular */
+            border: 2px solid #FF4500; /* Borde del botón */
+            background-color: transparent; /* Fondo transparente */
+            position: absolute; /* Cambiado a absoluto */
+            top: calc(50% - 85px); /* Centrar verticalmente */
+        }
+
+        /* Estilos adicionales para resaltar la flecha al pasar el mouse */
+        .arrow-button:hover {
+            background-color: #FF4500; /* Cambia el color de fondo al pasar el mouse */
+            color: #fff; /* Cambia el color del texto al pasar el mouse */
+        }
+
+        /* Estilos para la flecha izquierda */
+        .arrow-left {
+            left: 40px; /* Posición a la izquierda del contenedor */
+        }
+
+        /* Estilos para la flecha derecha */
+        .arrow-right {
+            right: 40px; /* Posición a la derecha del contenedor */
+        }
+        </style>
 </head>
+
 <body>
     <div class="container">
         <div class="sidebar" id="sidebar">
@@ -359,6 +500,22 @@ try {
             <div class="large-rectangle"></div>
             <!-- Rectángulo duplicado -->
             <div class="large-rectangle duplicate"></div>
+            <!-- Cuadrado en el centro -->
+            <div class="center-square">
+                <!-- Datos de la tutoría -->
+                <p><span class="curso"><?php echo $nombre_curso; ?>:</span> <span class="texto"><?php?></span></p>
+                <!-- Resto de datos de la tutoría -->
+                <p id="nombre-tutor"><?php echo $nombre_tutor; ?></p>
+                <p id="fecha-tutoria"><?php echo $fecha_tutoria; ?></p>
+                <p id="hora-tutoria"><?php echo $hora_tutoria; ?></p>
+                <p id="tema-tutoria"><?php echo $tema_tutoria; ?></p>
+                <!-- Botón Ir a la Tutoría -->
+                <button class="boton-tutoria" onclick="window.location.href='dashboard_tutorias.php';">Ir a Tutorías</button>
+                <div class="arrow-buttons-container">
+                <button class="arrow-button arrow-left" onclick="cambiarTutoria('anterior')">←</button>
+                <button class="arrow-button arrow-right" onclick="cambiarTutoria('siguiente')">→</button>
+                </div>
+            </div>
             <!-- Nuevo rectángulo adicional -->
             <div class="large-rectangle new">
                 <!-- Frase motivadora -->
@@ -397,6 +554,8 @@ try {
     <div class="menu-toggle" onclick="toggleSidebar()">
         <img src="icono_menu.png" alt="Menú">
     </div>
+
+    
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -415,6 +574,38 @@ try {
             // Redirigir al usuario al login
             window.location.href = 'login.php';
         }
+
+            // Obtener las tutorías del mismo alumno
+        var tutorias = <?php echo json_encode($tutorias); ?>;
+        var posicionActual = 0;
+
+        function cambiarTutoria(direccion) {
+            if (direccion === 'anterior') {
+                if (posicionActual > 0) {
+                    posicionActual--;
+                } else {
+                    // Si estamos en la primera tutoría, ir a la última
+                    posicionActual = tutorias.length - 1;
+                }
+            } else if (direccion === 'siguiente') {
+                if (posicionActual < tutorias.length - 1) {
+                    posicionActual++;
+                } else {
+                    // Si estamos en la última tutoría, ir a la primera
+                    posicionActual = 0;
+                }
+            }
+
+            // Actualizar los datos de la tutoría
+            var tutoria = tutorias[posicionActual];
+            document.getElementById("nombre-tutor").innerHTML = "<span class='texto'><strong>Tutor:</strong></span> " + tutoria.nombre;
+            document.getElementById("fecha-tutoria").innerHTML = "<span class='texto'><strong>Fecha:</strong></span> " + tutoria.fecha;
+            document.getElementById("hora-tutoria").innerHTML = "<span class='texto'><strong>Hora:</strong></span> " + tutoria.hora;
+            document.getElementById("tema-tutoria").innerHTML = "<span class='texto'><strong>Tema:</strong></span> " + tutoria.tema;
+            document.querySelector(".curso").textContent = tutoria.nombre_curso + ":";
+        }
+
+    
     </script>
 </body>
 </html>
