@@ -104,7 +104,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                   echo "<td>{$row['nombre']}</td>";
                   echo "<td>{$row['apellidos']}</td>";
                   echo "<td>{$row['correo']}</td>";
-                  echo "<td><a href=\"detalle_alumno.php?codigo={$row['cod_alumno']}\" class=\"btn btn-primary\">Ver Detalles</a></td>";
+                  echo "<td><a href=\"dashboard_detalle_alumno.php?codigo={$row['cod_alumno']}\" class=\"btn btn-primary\">Ver Detalles</a></td>";
                   echo "</tr>";
               }
           } else {
