@@ -1,9 +1,9 @@
--- phpMyAdmin SQL Dump
+
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-02-2024 a las 19:31:44
+-- Tiempo de generación: 25-02-2024 a las 09:09:38
 -- Versión del servidor: 8.0.35
 -- Versión de PHP: 8.2.12
 
@@ -81,6 +81,14 @@ CREATE TABLE `curso` (
   `creditos` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `curso`
+--
+
+INSERT INTO `curso` (`cod_curso`, `nombre_curso`, `ciclo`, `creditos`) VALUES
+('202W0405', 'PROBABILIDADES', 4, 3),
+('202W0406', 'PROCESOS DE SOFTWARE', 4, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -103,7 +111,7 @@ CREATE TABLE `evidencia` (
 CREATE TABLE `frases_motivadoras` (
   `id` int NOT NULL,
   `frase` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `frases_motivadoras`
@@ -161,7 +169,8 @@ CREATE TABLE `tutor` (
 --
 
 INSERT INTO `tutor` (`cod_tutor`, `id_usuario`, `nombre`, `apellidos`, `correo`, `numero_celular`) VALUES
-('15647852', 2, 'Manuel Jesús', 'Ibarra Cabrera', 'tutor@correo.com', '989475123');
+('15647852', 2, 'Manuel Jesús', 'Ibarra Cabrera', 'tutor@correo.com', '989475123'),
+('15675842', 5, 'Zoraida Judith', 'Huamán Gutiérrez', 'ejemplo.tutor2@correo.com', '969457213');
 
 --
 -- Disparadores `tutor`
@@ -202,6 +211,14 @@ CREATE TABLE `tutoría` (
   `tema` varchar(50) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `tutoría`
+--
+
+INSERT INTO `tutoría` (`id_tutoria`, `codalumno`, `codtutor`, `codcurso`, `fecha`, `hora`, `tema`) VALUES
+(1, '22200309', '15647852', '202W0406', '2024-03-01', '16:00:00', 'SCRUM'),
+(2, '22200309', '15675842', '202W0405', '2024-02-29', '16:00:00', 'Variables aleatorias');
+
 -- --------------------------------------------------------
 
 --
@@ -225,7 +242,8 @@ INSERT INTO `usuarios` (`id`, `nombre`, `nombre_usuario`, `contraseña`, `rol`, 
 (1, 'Romani Moscoso, Anthony Paolo', 'antorm', 'alum123', 'Alumno', 'http://localhost/foto_1.jpg'),
 (2, 'Ibarra Cabrera, Manuel Jesús', 'tutor', 'tutor123', 'Tutor', ''),
 (3, 'Lic. Karla Sánchez Nava', 'admi', 'admi123', 'Administrador', ''),
-(4, 'Serna Quiroz, Andrew Gabriel', 'sernak', 'alum321', 'Alumno', 'http://localhost/foto_2.jpg');
+(4, 'Serna Quiroz, Andrew Gabriel', 'sernak', 'alum321', 'Alumno', 'http://localhost/foto_2.jpg'),
+(5, 'Huamán Gutiérrez, Zoraida Judith', 'tutor2', 'tutor123', 'Tutor', '');
 
 --
 -- Disparadores `usuarios`
@@ -313,13 +331,13 @@ ALTER TABLE `frases_motivadoras`
 -- AUTO_INCREMENT de la tabla `tutoría`
 --
 ALTER TABLE `tutoría`
-  MODIFY `id_tutoria` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_tutoria` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Restricciones para tablas volcadas
