@@ -96,7 +96,7 @@ try {
 }
 
 try {
-    // Preparar la consulta SQL para obtener los datos de la tutoría del alumno
+    // Preparar la consulta SQL para obtener los datos de la primera tutoría del alumno
     $stmt_tutoria = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
                                     FROM tutoría AS t
                                     INNER JOIN curso AS c ON t.codcurso = c.cod_curso
@@ -107,7 +107,7 @@ try {
     $stmt_tutoria->bindParam(':nombre_usuario', $nombre_usuario);
     $stmt_tutoria->execute();
 
-    // Verificar si se encontraron tutorías para el estudiante
+    // Verificar si se encontró una tutoría para el estudiante
     if ($stmt_tutoria->rowCount() > 0) {
         $resultado_tutoria = $stmt_tutoria->fetch(PDO::FETCH_ASSOC);
         $fecha_tutoria = "<span class='texto'><strong>Fecha:</strong></span> " . $resultado_tutoria['fecha'];
@@ -117,7 +117,7 @@ try {
         $apellidos_tutor = "<span class='texto'><strong>Tutor:</strong></span> " . $resultado_tutoria['apellidos'];
         $nombre_tutor = "<span class='texto'><strong>Tutor:</strong></span> " . $resultado_tutoria['nombre'];
     } else {
-        // Si no se encontraron tutorías, mostrar un mensaje o asignar valores por defecto
+        // Si no se encontró una tutoría, mostrar un mensaje o asignar valores por defecto
         $fecha_tutoria = "No hay tutorías programadas";
         $hora_tutoria = "";
         $tema_tutoria = "";
@@ -131,8 +131,10 @@ try {
                                            FROM tutoría AS t
                                            INNER JOIN curso AS c ON t.codcurso = c.cod_curso
                                            INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
-                                           WHERE t.codalumno = (SELECT codalumno FROM alumno WHERE id_usuario = :id_usuario)");
-    $stmt_lista_tutorias->bindParam(':id_usuario', $id_usuario);
+                                           INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                           INNER JOIN usuarios AS u ON a.id_usuario = u.id
+                                           WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_lista_tutorias->bindParam(':nombre_usuario', $nombre_usuario);
     $stmt_lista_tutorias->execute();
 
     // Guardar las tutorías del alumno en un array
