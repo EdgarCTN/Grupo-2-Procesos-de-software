@@ -1,0 +1,253 @@
+/* Agrega estilos específicos para el administrador */
+
+/* Ejemplo de estilo para la sección de información del administrador */
+.admin-info {
+    background-color: #f0f0f0;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 8px;
+}
+
+.admin-info h3 {
+    color: #fcfcfc;
+}
+
+.admin-info p {
+    margin: 5px 0;
+}
+
+.admin-info span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Agrega estilos para el fondo del cuerpo */
+body {
+    background-color: #1e272e; /* Cambia este color según tus preferencias */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 20px;
+    width: 200px;
+    transition: width 0.5s;
+    overflow-x: hidden;
+}
+
+.sidebar.closed {
+    width: 60px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.sidebar.closed ul {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.sidebar li {
+    margin-bottom: 15px;
+}
+
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+    display: block;
+    padding: 10px 15px;
+    border-radius: 10px;
+    transition: background-color 0.3s;
+    background-color: #455a64;
+}
+
+.sidebar a:hover {
+    background-color: #607d8b;
+}
+
+.sidebar-logo {
+    text-align: center;
+    margin-bottom: 20px;
+    transition: all 0.5s;
+}
+
+.sidebar-logo img {
+    max-width: 150px;
+    margin-top: 30px;
+    transition: all 0.5s;
+}
+
+.sidebar.closed .sidebar-logo {
+    margin-bottom: 10px;
+}
+
+.sidebar.closed .sidebar-logo img {
+    max-width: 50px;
+}
+
+.main-content {
+    background-color: #1e272e;
+    padding: 20px;
+    flex: 1;
+}
+
+.welcome-message,
+.status-summary,
+.card-header {
+    margin-bottom: 20px;
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 10px;
+    color: #fff;
+}
+
+.welcome-message {
+    font-size: 24px;
+    color: #fff; /* Cambiar el color del texto a blanco */
+}
+
+.status-summary h3,
+.card-header h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.status-summary p,
+.card-body p {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #000;
+}
+
+.status-summary p span,
+.card-body p span {
+    font-weight: bold;
+    color: #3498db;
+}
+
+.status-summary .details,
+.card-body .details {
+    margin-top: 15px;
+    border-top: 1px solid #34495e;
+    padding-top: 15px;
+    font-size: 16px;
+}
+
+.course-table,
+.card-body .course-table {
+    margin-top: 20px;
+}
+
+.course-table table,
+.card-body .course-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.course-table th,
+.course-table td,
+.card-body .course-table th,
+.card-body .course-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.course-table th,
+.card-body .course-table th {
+    background-color: #3498db;
+    color: #fff;
+}
+
+.course-table td,
+.card-body .course-table td {
+    background-color: #ecf0f1;
+    color: #000;
+}
+
+.course-table tr:hover,
+.card-body .course-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.course-table tr:first-child th,
+.card-body .course-table tr:first-child th {
+    background-color: #5DADE2;
+    color: #fff;
+}
+
+.menu-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer;
+}
+
+.menu-toggle img {
+    width: 30px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+}
+
+.popup-content {
+    text-align: center;
+}
+
+.popup-buttons {
+    margin-top: 20px;
+}
+
+.popup-buttons button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #2c3e50;
+    color: #fff;
+    padding: 10px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card-header  {
+    margin: 0;
+}
+
+.card-body {
+    padding: 20px;
+}
