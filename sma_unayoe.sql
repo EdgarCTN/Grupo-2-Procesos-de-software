@@ -152,6 +152,33 @@ INSERT INTO `frases_motivadoras` (`id`, `frase`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `objetivo`
+--
+
+CREATE TABLE `objetivo` (
+  `id_objetivo` int NOT NULL,
+  `id_usuario` int NOT NULL,
+  `nombre_objetivo` varchar(50) NOT NULL,
+  `fecha` varchar(10) NOT NULL,
+  `hora` time NOT NULL,
+  `duracion` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `objetivo`
+--
+
+INSERT INTO `objetivo` (`id_objetivo`, `id_usuario`, `nombre_objetivo`, `fecha`, `hora`, `duracion`) VALUES
+(8, 1, 'Hola', '2024-02-26', '16:30:00', 2),
+(10, 1, 'Proyecto 1', '2024-03-01', '16:00:00', 2),
+(11, 1, 'Nashe', '2024-02-26', '20:00:00', 2),
+(12, 4, 'Trabajo', '2024-03-01', '20:00:00', 2),
+(13, 1, 'Trabajo 1', '2024-03-06', '20:04:00', 2),
+(14, 1, 'Trabajo 2', '2024-03-09', '22:06:00', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tutor`
 --
 
@@ -290,6 +317,13 @@ ALTER TABLE `frases_motivadoras`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `objetivo`
+--
+ALTER TABLE `objetivo`
+  ADD PRIMARY KEY (`id_objetivo`),
+  ADD KEY `FK_id_usuario` (`id_usuario`) USING BTREE;
+
+--
 -- Indices de la tabla `tutor`
 --
 ALTER TABLE `tutor`
@@ -328,6 +362,12 @@ ALTER TABLE `frases_motivadoras`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
+-- AUTO_INCREMENT de la tabla `objetivo`
+--
+ALTER TABLE `objetivo`
+  MODIFY `id_objetivo` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
 -- AUTO_INCREMENT de la tabla `tutoría`
 --
 ALTER TABLE `tutoría`
@@ -354,6 +394,12 @@ ALTER TABLE `alumno`
 --
 ALTER TABLE `evidencia`
   ADD CONSTRAINT `evidencia_ibfk_1` FOREIGN KEY (`idtutoria`) REFERENCES `tutoría` (`id_tutoria`);
+
+--
+-- Filtros para la tabla `objetivo`
+--
+ALTER TABLE `objetivo`
+  ADD CONSTRAINT `objetivo_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `tutor`
