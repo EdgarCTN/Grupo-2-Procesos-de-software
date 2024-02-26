@@ -25,7 +25,7 @@ try {
         $ruta_foto = $resultado['ruta_foto'];
     } else {
         // Si el usuario no se encuentra, mostrar un mensaje de error o una imagen por defecto
-        $ruta_foto = "ruta/por/defecto/foto.jpg";
+        $ruta_foto = "http://localhost/foto_defecto.png";
     }
 } catch(PDOException $e) {
     // Manejar errores de base de datos
