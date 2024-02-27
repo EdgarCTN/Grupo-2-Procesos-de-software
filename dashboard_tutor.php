@@ -75,6 +75,55 @@ try {
     $nombre = "Error";
     $correo = "Error";
 }
+try {
+    $stmt_alumnos = $conn->prepare("SELECT COUNT(*) AS total_alumnos FROM sma_unayoe.alumno");
+    $stmt_alumnos->execute();
+    $total_alumnos_result = $stmt_alumnos->fetch(PDO::FETCH_ASSOC);
+    $total_alumnos = $total_alumnos_result['total_alumnos'];
+} catch(PDOException $e) {
+    // Manejar errores de base de datos al obtener el número de alumnos
+    $total_alumnos = "Error";
+}
+
+try {
+    $stmt_tutores = $conn->prepare("SELECT COUNT(*) AS total_tutores FROM sma_unayoe.tutor");
+    $stmt_tutores->execute();
+    $total_tutores_result = $stmt_tutores->fetch(PDO::FETCH_ASSOC);
+    $total_tutores = $total_tutores_result['total_tutores'];
+} catch(PDOException $e) {
+    // Manejar errores de base de datos al obtener el número de alumnos
+    $total_tutores = "Error";
+}
+try {
+    // Consulta SQL para obtener el número de tutorías
+    $stmt_tutorias = $conn->prepare("SELECT COUNT(*) AS total_tutorias FROM sma_unayoe.tutoría");
+    $stmt_tutorias->execute();
+    $total_tutorias_result = $stmt_tutorias->fetch(PDO::FETCH_ASSOC);
+    $total_tutorias = $total_tutorias_result['total_tutorias'];
+} catch(PDOException $e) {
+    // Manejar errores de base de datos al obtener el número de tutorías
+    $total_tutorias = "Error";
+}
+
+
+try {
+    // Consulta SQL para obtener el número total de objetivos
+    $stmt_objetivo = $conn->prepare("SELECT COUNT(*) AS total_objetivo FROM sma_unayoe.objetivo");
+    $stmt_objetivo->execute();
+    $total_objetivo_result = $stmt_objetivo->fetch(PDO::FETCH_ASSOC);
+    $total_objetivo = $total_objetivo_result['total_objetivo'];
+
+    // Calcular el número promedio de objetivos por alumno
+    if ($total_alumnos > 0) {
+        $total_objetivo_promedio = $total_objetivo / $total_alumnos;
+    } else {
+        $total_objetivo_promedio = 0; // Evitar división por cero
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos al obtener el número de objetivos
+    $total_objetivo = "Error";
+    $total_objetivo_promedio = "Error";
+}
 
 ?>
 
@@ -85,6 +134,22 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
     <link rel="stylesheet" type="text/css" href="css/style_Tutor.css"><!-- Aquí se agrega el enlace al archivo CSS -->
+    <style>
+        .tutor-info .card-body {
+            display: flex;
+            align-items: center;
+        }
+
+        .tutor-image img {
+            width: 100px; /* Ajusta el ancho según sea necesario */
+            height: auto; /* Para mantener la proporción de la imagen */
+            margin-right: 20px; /* Espacio entre la imagen y los detalles */
+        }
+
+        .tutor-details {
+            flex: 1; /* Para que los detalles ocupen todo el espacio disponible */
+        }
+    </style>
 </head>
     
 <body>
@@ -98,6 +163,7 @@ try {
                 <li><a href="dashboard_tutor.php">Inicio</a></li>
                 <li><a href="dashboard_tabla_profesor.php">Alumnos</a></li>
                 <li><a href="dashboard_tutorias_profesor.php">Tutorias</a></li>
+
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
@@ -113,10 +179,15 @@ try {
                 echo "<div class='tutor-info card'>";
                 echo "<div class='card-header'><h3>Información del Tutor:</h3></div>";
                 echo "<div class='card-body'>";
+                echo "<div class='tutor-image'>";
+                echo "<img src='$ruta_foto' alt='Foto del Tutor'>";
+                echo "</div>";
+                echo "<div class='tutor-details'>";
                 echo "<p>Código de Tutor: <span>$cod_tutor</span></p>";
                 echo "<p>Nombre: <span>$nombre</span></p>";
                 echo "<p>Apellidos: <span>$apellidos</span></p>";
                 echo "<p>Correo: <span>$correo</span></p>";
+                echo "</div>";
                 echo "</div>";
                 echo "</div>";
 
@@ -124,12 +195,13 @@ try {
                 echo "<div class='status-summary card'>";
                 echo "<div class='card-header'><h3>Resumen del estado actual:</h3></div>";
                 echo "<div class='card-body'>";
-                echo "<p>Total de alumnos: <span>XX</span></p>";
-                echo "<p>Alumnos con 2 repitencias: <span>XX</span></p>";
-                echo "<p>Alumnos con 3 repitencias (aunque no trabajamos con número de repitencias XD): <span>XX</span></p>";
+                echo "<p>Total de alumnos: <span>$total_alumnos</span></p>";
+                echo "<p>Total de tutores: <span>$total_tutores</span></p>";
+                echo "<p>Tutorias pendientes totales: <span>$total_tutorias</span></p>";
+                echo "<p>Objetivos promedio por alumno: <span>" . number_format($total_objetivo_promedio, 1) . "</span></p>";
                 echo "</div>";
                 echo "</div>";
-
+                
                 // Puedes agregar más detalles según sea necesario
                 echo "<div class='details'><h3>Distribución de alumnos";
                 echo "</div>";
