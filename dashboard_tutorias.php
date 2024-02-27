@@ -512,8 +512,8 @@ try {
                             <label for="hora">Hora:</label>
                             <input type="time" name="hora" required>
 
-                            <label for="tema">Tema:</label>
-                            <input type="text" name="tema" required>
+                            <label for="tema">Tema (mínimo 10 letras):</label> 
+                            <input type="text" name="tema" required minlength="10">
 
                             <button type="submit">Agregar Tutoría</button>
                         </form>     
@@ -557,6 +557,41 @@ try {
             // Redirigir al usuario al login
             window.location.href = 'login.php';
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var fechaInput = document.querySelector('input[name="fecha"]');
+            fechaInput.addEventListener('input', function () {
+                var fechaSeleccionada = new Date(this.value);
+                var hoy = new Date();
+                var limiteFecha = new Date();
+                limiteFecha.setDate(limiteFecha.getDate() + 2);
+
+                if (fechaSeleccionada < hoy) {
+                    alert("No se puede programar una tutoría para el mismo día o una fecha pasada. Por favor, elige una fecha futura.");
+                    this.value = '';
+                } else if (fechaSeleccionada < limiteFecha) {
+                    alert("La tutoría debe programarse con al menos dos días de anticipación.");
+                    this.value = '';
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var horaInput = document.querySelector('input[name="hora"]');
+            horaInput.addEventListener('input', function () {
+                var horaSeleccionada = this.value;
+
+                // Obtener las horas y minutos
+                var [horas, minutos] = horaSeleccionada.split(':');
+                horas = parseInt(horas, 10);
+
+                // Validar el rango de horas permitido (de 8 am a 10 pm)
+                if (horas < 8 || horas > 22) {
+                    alert("La tutoría solo puede programarse entre las 8 am y las 10 pm. Por favor, selecciona una hora válida.");
+                    this.value = '';
+                }
+            });
+        });
     </script>
 </body>
 </html>
