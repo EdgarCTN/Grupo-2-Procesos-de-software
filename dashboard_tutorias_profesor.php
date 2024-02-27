@@ -8,8 +8,50 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Archivo de conexión a la base de datos
 include 'conn/connection.php';
 
-// Obtener el nombre de usuario de la sesión
-$nombre_usuario = $_SESSION['nombre'];
+try {
+    // Preparar la consulta SQL para obtener el ID del usuario basado en el nombre de usuario
+    $stmt_usuario = $conn->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt_usuario->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_usuario->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt_usuario->rowCount() > 0) {
+        $resultado_usuario = $stmt_usuario->fetch(PDO::FETCH_ASSOC);
+        $id_usuario = $resultado_usuario['id'];
+
+        // Preparar la consulta SQL para obtener los datos del alumno usando el ID del usuario
+        $stmt_alumno = $conn->prepare("SELECT cod_alumno, apellidos, nombre, facultad FROM alumno WHERE id_usuario = :id_usuario");
+        $stmt_alumno->bindParam(':id_usuario', $id_usuario);
+        $stmt_alumno->execute();
+
+        // Verificar si se encontró el alumno
+        if ($stmt_alumno->rowCount() > 0) {
+            $resultado_alumno = $stmt_alumno->fetch(PDO::FETCH_ASSOC);
+            $cod_alumno = $resultado_alumno['cod_alumno'];
+            $apellidos = $resultado_alumno['apellidos'];
+            $nombre = $resultado_alumno['nombre'];
+            $facultad = $resultado_alumno['facultad'];
+        } else {
+            // Si el alumno no se encuentra, mostrar un mensaje de error o asignar valores por defecto
+            $cod_alumno = "No disponible";
+            $apellidos = "No disponible";
+            $nombre = "No disponible";
+            $facultad = "No disponible";
+        }
+    } else {
+        // Si no se encuentra el usuario, mostrar un mensaje de error o asignar valores por defecto
+        $cod_alumno = "No disponible";
+        $apellidos = "No disponible";
+        $nombre = "No disponible";
+        $facultad = "No disponible";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $cod_alumno = "Error";
+    $apellidos = "Error";
+    $nombre = "Error";
+    $facultad = "Error";
+}
 ?>
 
 <!DOCTYPE html>
@@ -148,7 +190,7 @@ $nombre_usuario = $_SESSION['nombre'];
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] . "</div>";
+                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre']."</div>";
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }

@@ -8,8 +8,98 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 // Archivo de conexión a la base de datos
 include 'conn/connection.php';
 
-// Obtener el nombre de usuario de la sesión
 $nombre_usuario = $_SESSION['nombre'];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recuperar y procesar los datos del formulario
+    $codalumno = $_POST["codalumno"];
+    $codtutor = $_POST["codtutor"];
+    $codcurso = $_POST["codcurso"];
+    $fecha = $_POST["fecha"];
+    $hora = $_POST["hora"];
+    $tema = $_POST["tema"];
+
+    // Conectar a la base de datos
+    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+
+    // Verificar la conexión
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
+    }
+
+    try {
+        // Comenzar una transacción
+        $conexion->begin_transaction();
+
+        // Preparar la consulta para insertar una nueva tutoría
+        $consulta_tutoria = $conexion->prepare("INSERT INTO tutoría (codalumno, codtutor, codcurso, fecha, hora, tema) VALUES (?, ?, ?, ?, ?, ?)");
+
+        // Vincular los parámetros y ejecutar la consulta
+        $consulta_tutoria->bind_param("ssssss", $codalumno, $codtutor, $codcurso, $fecha, $hora, $tema);
+        $consulta_tutoria->execute();
+
+        // Confirmar la transacción
+        $conexion->commit();
+
+        // Cerrar la conexión
+        $conexion->close();
+
+        // Redirigir a la página de tutorías después de agregar la tutoría
+        header("Location: dashboard_tutorias.php");
+        exit;
+    } catch (Exception $e) {
+        // Revertir la transacción en caso de error
+        $conexion->rollback();
+
+        // Manejar el error (puedes personalizar según tus necesidades)
+        echo "Error al agregar tutoría: " . $e->getMessage();
+    }
+}
+
+try {
+    // Preparar la consulta SQL para obtener el ID del usuario basado en el nombre de usuario
+    $stmt_usuario = $conn->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+    $stmt_usuario->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_usuario->execute();
+
+    // Verificar si se encontró el usuario
+    if ($stmt_usuario->rowCount() > 0) {
+        $resultado_usuario = $stmt_usuario->fetch(PDO::FETCH_ASSOC);
+        $id_usuario = $resultado_usuario['id'];
+
+        // Preparar la consulta SQL para obtener los datos del alumno usando el ID del usuario
+        $stmt_alumno = $conn->prepare("SELECT cod_alumno, apellidos, nombre, facultad FROM alumno WHERE id_usuario = :id_usuario");
+        $stmt_alumno->bindParam(':id_usuario', $id_usuario);
+        $stmt_alumno->execute();
+
+        // Verificar si se encontró el alumno
+        if ($stmt_alumno->rowCount() > 0) {
+            $resultado_alumno = $stmt_alumno->fetch(PDO::FETCH_ASSOC);
+            $cod_alumno = $resultado_alumno['cod_alumno'];
+            $apellidos = $resultado_alumno['apellidos'];
+            $nombre = $resultado_alumno['nombre'];
+            $facultad = $resultado_alumno['facultad'];
+        } else {
+            // Si el alumno no se encuentra, mostrar un mensaje de error o asignar valores por defecto
+            $cod_alumno = "No disponible";
+            $apellidos = "No disponible";
+            $nombre = "No disponible";
+            $facultad = "No disponible";
+        }
+    } else {
+        // Si no se encuentra el usuario, mostrar un mensaje de error o asignar valores por defecto
+        $cod_alumno = "No disponible";
+        $apellidos = "No disponible";
+        $nombre = "No disponible";
+        $facultad = "No disponible";
+    }
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $cod_alumno = "Error";
+    $apellidos = "Error";
+    $nombre = "Error";
+    $facultad = "Error";
+}
 ?>
 
 <!DOCTYPE html>
@@ -101,28 +191,7 @@ $nombre_usuario = $_SESSION['nombre'];
             border-bottom: 2px solid #2c3e50;
             padding-bottom: 10px;
             width: 100%;
-        }
-        .user-photo-container {
-            width: 300px; /* Ajuste para el espacio alrededor de la imagen */
-            height: 300px; /* Misma altura y ancho */
-            border-radius: 50%; /* Forma circular */
-            overflow: hidden; /* Recorta cualquier exceso fuera del círculo */
-            margin-bottom: 20px;
-            position: absolute;
-            top: 17%; /* Mover la imagen hacia arriba */
-            left: 40px;
-        }
-        .alumno-info-container {
-            position: absolute;
-            top: 17%;
-            left: 400px; /* Ajusta este valor según sea necesario */
-        }
-        .user-photo {
-            width: 100%; /* Ocupa todo el contenedor */
-            height: 100%; /* Ocupa todo el contenedor */
-            object-fit: cover; /* Ajusta la imagen para mantener la forma circular */
-            border-radius: 50%; /* Forma circular */
-        }
+        }      
         .menu-toggle {
             position: absolute;
             top: 10px;
@@ -155,96 +224,6 @@ $nombre_usuario = $_SESSION['nombre'];
             margin: 0 10px;
             cursor: pointer;
         }
-        .large-rectangle {
-            background-color: #455a64;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            width: calc(50% - 10px); /* Ajuste para la separación */
-            height: 50vh;
-        }
-        /* Nuevos estilos para el rectángulo duplicado */
-        .large-rectangle.duplicate {
-            position: absolute;
-            top: 80px; /* Misma posición que el rectángulo original */
-            left: calc(50% + 10px); /* Se ubica a la derecha del rectángulo original con la separación */
-        }
-        .large-rectangle.new {
-            background-color: #f9e46e;
-            border: 4px solid #ffd700; /* Borde amarillo un poco más fuerte */
-            border-radius: 10px;
-            margin-bottom: 20px;
-            width: calc(70% - 10px); /* Ajuste para la separación y aumento del ancho */
-            height: 35vh; /* Altura reducida */
-            position: relative; /* Cambiado a relative */
-            bottom: 0px; /* Posición un poco más abajo */
-            left: 50%; /* Centrado horizontalmente */
-            transform: translateX(-50%); /* Centrado horizontalmente */
-        }
-
-        .large-rectangle.new::before {
-            content: ""; /* Contenido vacío necesario para que se muestre la pseudo-clase */
-            background-image: url('http://localhost/icono_cerebro.png');
-            background-size: cover; /* Ajusta la imagen para que cubra todo el espacio */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-position: center; /* Centra la imagen */
-            position: absolute;
-            top: 50%; /* Centra verticalmente */
-            left: -100px; /* Ajusta para posicionar desde el borde izquierdo */
-            transform: translateY(-50%); /* Centra verticalmente */
-            width: 200px; /* Ancho de la imagen */
-            height: 200px; /* Alto de la imagen */
-        }
-
-
-        /* Estilos para los datos del alumno */
-        .alumno-info p {
-            font-family: 'Roboto', sans-serif;
-            font-size: 30px;
-            font-weight: bold; /* Asegúrate de especificar el peso de la fuente como 'bold' para la versión negrita */
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        /* Estilos para el título "Datos del estudiante" */
-        .title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #fff;
-            position: absolute;
-            top: -40px; /* Mover el título hacia arriba */
-            left: 0;
-            background-color: rgba(0, 0, 0, 0.5); /* Color de fondo semitransparente */
-            padding: 10px 20px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-        /* Estilos para el contenedor de texto */
-        .text-container {
-            background-color: #607d8b; /* Color de fondo */
-            color: #fff; /* Color del texto */
-            padding: 8px; /* Espaciado interno */
-            border-radius: 10px; /* Esquinas redondeadas */
-            margin-bottom: 10px; /* Espaciado inferior */
-            font-size: 22px; /* Tamaño de fuente */
-            font-weight: bold; /* Negrita */
-        }
-        /* Estilos para la frase motivadora */
-        .motivational-quote {
-            font-size: 60px;
-            color: #455a64;
-            font-family: 'Roboto', sans-serif;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            width: calc(100% - 40px); /* Ancho igual al 100% del contenedor menos el espacio de los márgenes */
-            max-width: calc(95% - 40px); /* Máximo ancho igual al 70% del contenedor menos el espacio de los márgenes */
-            padding: 0 20px; /* Añadido para dar espacio entre el texto y los bordes del contenedor */
-            box-sizing: border-box; /* Hace que el padding no afecte al ancho total */
-            
-        }
     </style>
 </head>
 <body>
@@ -259,19 +238,98 @@ $nombre_usuario = $_SESSION['nombre'];
                 <li><a href="dashboard_tutorias.php">Tutorías</a></li>
                 <li><a href="horario.php">Horario</a></li>
                 <li><a href="objetivos.php">Objetivos</a></li>
-                <li><a href="consultas.php">Consultas</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] . "</div>";
+                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] .$cod_alumno. "</div>";
+                           
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
+            <h1>Agregar Tutoría</h1>
             
+            <!-- Formulario para agregar tutoría -->
+            <!-- Formulario para agregar tutoría -->
+            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                <label for="codalumno">Código Alumno:</label>
+                
+                <select name="codalumno" required>
+                    <!-- Opciones para seleccionar el código del alumno -->
+                    <?php
+                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+
+                    if ($conexion->connect_error) {
+                        die("Error de conexión: " . $conexion->connect_error);
+                    }
+
+                    // Consulta para obtener los códigos de los alumnos ordenados alfabéticamente
+                    $consulta_alumnos = $conexion->query("SELECT cod_alumno FROM alumno ORDER BY nombre");
+
+                    while ($fila = $consulta_alumnos->fetch_assoc()) {
+                        echo "<option value='" . $fila['cod_alumno'] . "'>" . $fila['cod_alumno'] . "</option>";
+                    }
+
+                    $conexion->close();
+                    ?>
+                </select>
+
+                <label for="codtutor">Código Tutor:</label>
+                <select name="codtutor" required>
+                    <!-- Opciones para seleccionar el código del tutor -->
+                    <?php
+                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+
+                    if ($conexion->connect_error) {
+                        die("Error de conexión: " . $conexion->connect_error);
+                    }
+
+                    // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
+                    $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
+
+                    while ($fila = $consulta_tutores->fetch_assoc()) {
+                        echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
+                    }
+
+                    $conexion->close();
+                    ?>
+                </select>
+
+                <label for="codcurso">Código Curso:</label>
+                <select name="codcurso" required>
+                    <!-- Opciones para seleccionar el código del curso -->
+                    <?php
+                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+
+                    if ($conexion->connect_error) {
+                        die("Error de conexión: " . $conexion->connect_error);
+                    }
+
+                    // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
+                    $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
+
+                    while ($fila = $consulta_cursos->fetch_assoc()) {
+                        echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
+                    }
+
+                    $conexion->close();
+                    ?>
+                </select>
+
+                <label for="fecha">Fecha:</label>
+                <input type="date" name="fecha" required>
+
+                <label for="hora">Hora:</label>
+                <input type="time" name="hora" required>
+
+                <label for="tema">Tema:</label>
+                <input type="text" name="tema" required>
+
+                <button type="submit">Agregar Tutoría</button>
+            </form>        
         </div>
     </div>
 

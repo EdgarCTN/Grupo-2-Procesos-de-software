@@ -111,7 +111,7 @@ CREATE TABLE `evidencia` (
 CREATE TABLE `frases_motivadoras` (
   `id` int NOT NULL,
   `frase` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `frases_motivadoras`
@@ -162,7 +162,7 @@ CREATE TABLE `objetivo` (
   `fecha` varchar(10) NOT NULL,
   `hora` time NOT NULL,
   `duracion` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `objetivo`
