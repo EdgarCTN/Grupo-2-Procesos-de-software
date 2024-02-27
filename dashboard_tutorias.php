@@ -257,25 +257,7 @@ try {
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
                 <label for="codalumno">Código Alumno:</label>
                 
-                <select name="codalumno" required>
-                    <!-- Opciones para seleccionar el código del alumno -->
-                    <?php
-                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
-
-                    if ($conexion->connect_error) {
-                        die("Error de conexión: " . $conexion->connect_error);
-                    }
-
-                    // Consulta para obtener los códigos de los alumnos ordenados alfabéticamente
-                    $consulta_alumnos = $conexion->query("SELECT cod_alumno FROM alumno ORDER BY nombre");
-
-                    while ($fila = $consulta_alumnos->fetch_assoc()) {
-                        echo "<option value='" . $fila['cod_alumno'] . "'>" . $fila['cod_alumno'] . "</option>";
-                    }
-
-                    $conexion->close();
-                    ?>
-                </select>
+                <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
 
                 <label for="codtutor">Código Tutor:</label>
                 <select name="codtutor" required>
