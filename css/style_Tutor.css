@@ -131,7 +131,7 @@ body {
 
 .course-table table,
 .card-body .course-table table {
-    width: 100%;
+    width: 75%;
     border-collapse: collapse;
 }
 
@@ -177,7 +177,6 @@ body {
 .menu-toggle img {
     width: 30px;
 }
-
 .popup {
     display: none;
     position: fixed;
@@ -205,6 +204,7 @@ body {
     cursor: pointer;
 }
 
+
 .card {
     background-color: #fff;
     border-radius: 10px;
@@ -226,4 +226,39 @@ body {
 
 .card-body {
     padding: 20px;
+}
+.tutor-info .card-body {
+    display: flex;
+    align-items: center;
+}
+
+
+
+
+/* Redimensionar la imagen del tutor */
+.tutor-image {
+    width: 100px; /* Ancho de la imagen aumentado */
+    height: 100px; /* Altura de la imagen aumentada */
+    overflow: hidden;
+    border-radius: 90%; /* Hacer la imagen circular */
+    margin-right: 50px; /* Espacio entre la imagen y los detalles */
+}
+
+/* Ajustar la imagen dentro del contenedor circular */
+.tutor-image img {
+    width: 100%; /* Ajusta la imagen para que llene el contenedor circular */
+    height: 100%; /* Ajusta la altura de la imagen */
+    object-fit: cover; /* Escalar la imagen para cubrir todo el contenedor */
+    
+}
+
+
+
+.tutor-details {
+    flex: 1; /* Para que los detalles ocupen todo el espacio disponible */
+}
+
+.card {
+    width: 75%; /* Establecer el ancho al 75% del contenedor */
+    margin: 1 auto; 
 }
