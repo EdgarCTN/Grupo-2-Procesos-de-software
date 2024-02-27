@@ -159,6 +159,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
     <style>
+        /* Estilos generales */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -472,7 +473,7 @@ try {
         .arrow-right {
             right: 40px; /* Posición a la derecha del contenedor */
         }
-        </style>
+    </style>
 </head>
 
 <body>
@@ -487,6 +488,7 @@ try {
                 <li><a href="dashboard_tutorias.php">Tutorías</a></li>
                 <li><a href="horario.php">Horario</a></li>
                 <li><a href="objetivos.php">Objetivos</a></li>
+                <li><a href="consultas.php">Consultas</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
