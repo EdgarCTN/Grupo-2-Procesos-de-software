@@ -284,6 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li><a href="dashboard_tutorias.php">Tutorías</a></li>
                 <li><a href="horario.php">Horario</a></li>
                 <li><a href="objetivos.php">Objetivos</a></li>
+                <li><a href="consultas.php">Consultas</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
