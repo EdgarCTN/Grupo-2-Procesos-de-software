@@ -224,6 +224,78 @@ try {
             margin: 0 10px;
             cursor: pointer;
         }
+        .contenedor-general{
+            width: 100%;
+            display: flex;
+            flex-direction: row;            
+        }
+        .contenedor-datos{
+            width: 50%;
+            align-items: center; /* Centrado vertical */
+            justify-content: center; /* Centrado horizontal */
+            
+            
+        }
+        .contenedor-form{
+            width: 50%;          
+            align-items: center; /* Centrado vertical */
+            justify-content: center; /* Centrado horizontal */  
+        }       
+        .main-content {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .main-content h1 {
+            color: #fff; /* Color blanco para el encabezado h1 */
+        }
+
+        form {
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            background-color: #fff; /* Color de fondo del formulario */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra del formulario */
+        }
+
+        form label {
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        form input,
+        form select,
+        form button {
+            font-size: 16px;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        form button {
+            background-color: #4caf50; /* Color de fondo del botón */
+            color: #fff;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #45a049; /* Cambio de color al pasar el ratón */
+        }
+
+        .popup-content {
+            background-color: transparent; /* Hace que el fondo del mensaje de confirmación sea transparente */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup-content p {
+            color: #000; /* Texto negro en el mensaje de confirmación */
+        }
     </style>
 </head>
 <body>
@@ -251,67 +323,123 @@ try {
             }
             ?>
             <h1>Agregar Tutoría</h1>
-            
-            <!-- Formulario para agregar tutoría -->
-            <!-- Formulario para agregar tutoría -->
-            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                <label for="codalumno">Código Alumno:</label>
-                
-                <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
+            <div class="contenedor-general">
+            <div class="contenedor-datos">
+                <?php
+                // Configuración de la conexión a la base de datos
+                $servername = "127.0.0.1:3307";
+                $username = "pma";
+                $password = "";
+                $dbname = "sma_unayoe";
 
-                <label for="codtutor">Código Tutor:</label>
-                <select name="codtutor" required>
-                    <!-- Opciones para seleccionar el código del tutor -->
-                    <?php
-                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+                // Crear la conexión
+                $conn = new mysqli($servername, $username, $password, $dbname);
 
-                    if ($conexion->connect_error) {
-                        die("Error de conexión: " . $conexion->connect_error);
+                // Verificar la conexión
+                if ($conn->connect_error) {
+                    die("Error de conexión: " . $conn->connect_error);
+                }
+
+                // Consulta para obtener todos los cursos
+                $cursos_query = "SELECT * FROM curso";
+                $cursos_result = $conn->query($cursos_query);
+
+                // Consulta para obtener todos los tutores
+                $tutores_query = "SELECT * FROM tutor";
+                $tutores_result = $conn->query($tutores_query);
+
+                // Verificar si hay resultados y mostrarlos
+                if ($cursos_result->num_rows > 0) {
+                    echo "<h2>Cursos</h2>";
+                    echo "<ul>";
+                    while ($curso = $cursos_result->fetch_assoc()) {
+                        echo "<div>";
+                        echo "<li>Código: {$curso['cod_curso']} - Curso: {$curso['nombre_curso']} - Ciclo {$curso['ciclo']} - Créditos: {$curso['creditos']}</li>";
+                        echo "</div>";
                     }
+                    echo "</ul>";
+                } else {
+                    echo "No hay cursos disponibles.";
+                }
 
-                    // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
-                    $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
-
-                    while ($fila = $consulta_tutores->fetch_assoc()) {
-                        echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
+                if ($tutores_result->num_rows > 0) {
+                    echo "<h2>Tutores</h2>";
+                    echo "<ul>";
+                    while ($tutor = $tutores_result->fetch_assoc()) {
+                        echo "<li>Código: {$tutor['cod_tutor']} - Nombre: {$tutor['nombre']} - Correo: {$tutor['correo']} - Celular: {$tutor['numero_celular']}</li>";
                     }
+                    echo "</ul>";
+                } else {
+                    echo "No hay tutores disponibles.";
+                }
 
-                    $conexion->close();
-                    ?>
-                </select>
+                // Cerrar la conexión
+                $conn->close();
+                ?>
+            </div>         
+            <div class="contenedor-form">
+                <!-- Formulario para agregar tutoría -->
+                <!-- Formulario para agregar tutoría -->
+                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                    <label for="codalumno">Código Alumno:</label>
+                    
+                    <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
 
-                <label for="codcurso">Código Curso:</label>
-                <select name="codcurso" required>
-                    <!-- Opciones para seleccionar el código del curso -->
-                    <?php
-                    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+                    <label for="codtutor">Código Tutor:</label>
+                    <select name="codtutor" required>
+                        <!-- Opciones para seleccionar el código del tutor -->
+                        <?php
+                        $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
 
-                    if ($conexion->connect_error) {
-                        die("Error de conexión: " . $conexion->connect_error);
-                    }
+                        if ($conexion->connect_error) {
+                            die("Error de conexión: " . $conexion->connect_error);
+                        }
 
-                    // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
-                    $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
+                        // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
+                        $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
 
-                    while ($fila = $consulta_cursos->fetch_assoc()) {
-                        echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
-                    }
+                        while ($fila = $consulta_tutores->fetch_assoc()) {
+                            echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
+                        }
 
-                    $conexion->close();
-                    ?>
-                </select>
+                        $conexion->close();
+                        ?>
+                    </select>
 
-                <label for="fecha">Fecha:</label>
-                <input type="date" name="fecha" required>
+                    <label for="codcurso">Código Curso:</label>
+                    <select name="codcurso" required>
+                        <!-- Opciones para seleccionar el código del curso -->
+                        <?php
+                        $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
 
-                <label for="hora">Hora:</label>
-                <input type="time" name="hora" required>
+                        if ($conexion->connect_error) {
+                            die("Error de conexión: " . $conexion->connect_error);
+                        }
 
-                <label for="tema">Tema:</label>
-                <input type="text" name="tema" required>
+                        // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
+                        $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
 
-                <button type="submit">Agregar Tutoría</button>
-            </form>        
+                        while ($fila = $consulta_cursos->fetch_assoc()) {
+                            echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
+                        }
+
+                        $conexion->close();
+                        ?>
+                    </select>
+
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" name="fecha" required>
+
+                    <label for="hora">Hora:</label>
+                    <input type="time" name="hora" required>
+
+                    <label for="tema">Tema:</label>
+                    <input type="text" name="tema" required>
+
+                    <button type="submit">Agregar Tutoría</button>
+                </form>     
+            </div>
+            </div>   
         </div>
     </div>
 
