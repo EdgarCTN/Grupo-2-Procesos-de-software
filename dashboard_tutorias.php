@@ -144,7 +144,7 @@ try {
             opacity: 0;
         }
         .sidebar li {
-            margin-bottom: 15px; /* Separación entre cada opción */
+            margin-bottom: 15px; /* Separación entre cada opción */ 
         }
         .sidebar a {
             color: #fff;
@@ -227,27 +227,49 @@ try {
         .contenedor-general{
             width: 100%;
             display: flex;
-            flex-direction: row;            
+            flex-direction: row;
         }
         .contenedor-datos{
             width: 50%;
             align-items: center; /* Centrado vertical */
             justify-content: center; /* Centrado horizontal */
-            
-            
+            background-color: #455a64;  
+            margin: 0px 20px 10px 0px;
+            border: 2px solid #ffffff; /* Borde */  
+            padding: 20px;
+            text-align: center;
+            border-radius: 30px;   
         }
         .contenedor-form{
             width: 50%;          
             align-items: center; /* Centrado vertical */
-            justify-content: center; /* Centrado horizontal */  
+            justify-content: center; /* Centrado horizontal */
+            background-color: #455a64; 
+            margin: 0px 10px 0px 20px;  
+            padding: 20px 20px 40px 20px;
+            border-radius: 30px; 
         }       
         .main-content {
             flex: 1;
             padding: 40px;
+            width: 100%;          
+        }
+        .cont_general{
+            width:100%;                      
         }
 
         .main-content h1 {
             color: #fff; /* Color blanco para el encabezado h1 */
+            width: 100%;
+            text-align: center;
+        }
+
+        .titulo_agregar_tutoria{
+            text-align: center;
+            color: #000;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 30px;  
+            
         }
 
         form {
@@ -296,6 +318,50 @@ try {
         .popup-content p {
             color: #000; /* Texto negro en el mensaje de confirmación */
         }
+
+
+        /* estilos para tablas curso y profesor*/
+
+        .titulo-seccion {
+            color: #ffffff; /* Color del texto */
+            font-size: 30px; /* Tamaño del texto */
+            margin-bottom: 10px; /* Espaciado inferior */
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 30px; 
+                     
+        }
+
+        .contenedor-cursos {
+            color: #ffffff;
+            background-color: #607d8b;  
+            border-radius: 30px;
+            padding: 10px 0px 10px 0px;                     
+        }
+
+        .contenedor-tutores{
+            color: #ffffff;
+            background-color: #607d8b; 
+            border-radius: 30px;
+            padding: 10px 0px 10px 0px;  
+
+        }
+
+        .lista-cursos, .lista-tutores {
+            color: #ffffff; /* Color del texto */
+            list-style: none; /* Eliminar viñetas */
+            padding: 0; /* Eliminar relleno */
+            margin: 0; /* Eliminar márgenes */
+            background-color: #607d8b;
+            border-radius: 30px; 
+        }
+
+        .item-curso, .item-tutor {
+            color: #ffffff; /* Color del texto */
+            font-size: 20px; /* Tamaño del texto */
+            margin-bottom: 5px; /* Espaciado inferior */
+            list-style: none;
+               
+        }
     </style>
 </head>
 <body>
@@ -316,130 +382,144 @@ try {
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre'] .$cod_alumno. "</div>";
+                echo "<div class='welcome-message'>Bienvenido, " . $_SESSION['nombre']. "</div>";
                            
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
-            <h1>Agregar Tutoría</h1>
-            <div class="contenedor-general">
-            <div class="contenedor-datos">
-                <?php
-                // Configuración de la conexión a la base de datos
-                $servername = "127.0.0.1:3307";
-                $username = "pma";
-                $password = "";
-                $dbname = "sma_unayoe";
-
-                // Crear la conexión
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                // Verificar la conexión
-                if ($conn->connect_error) {
-                    die("Error de conexión: " . $conn->connect_error);
-                }
-
-                // Consulta para obtener todos los cursos
-                $cursos_query = "SELECT * FROM curso";
-                $cursos_result = $conn->query($cursos_query);
-
-                // Consulta para obtener todos los tutores
-                $tutores_query = "SELECT * FROM tutor";
-                $tutores_result = $conn->query($tutores_query);
-
-                // Verificar si hay resultados y mostrarlos
-                if ($cursos_result->num_rows > 0) {
-                    echo "<h2>Cursos</h2>";
-                    echo "<ul>";
-                    while ($curso = $cursos_result->fetch_assoc()) {
-                        echo "<div>";
-                        echo "<li>Código: {$curso['cod_curso']} - Curso: {$curso['nombre_curso']} - Ciclo {$curso['ciclo']} - Créditos: {$curso['creditos']}</li>";
-                        echo "</div>";
-                    }
-                    echo "</ul>";
-                } else {
-                    echo "No hay cursos disponibles.";
-                }
-
-                if ($tutores_result->num_rows > 0) {
-                    echo "<h2>Tutores</h2>";
-                    echo "<ul>";
-                    while ($tutor = $tutores_result->fetch_assoc()) {
-                        echo "<li>Código: {$tutor['cod_tutor']} - Nombre: {$tutor['nombre']} - Correo: {$tutor['correo']} - Celular: {$tutor['numero_celular']}</li>";
-                    }
-                    echo "</ul>";
-                } else {
-                    echo "No hay tutores disponibles.";
-                }
-
-                // Cerrar la conexión
-                $conn->close();
-                ?>
-            </div>         
-            <div class="contenedor-form">
-                <!-- Formulario para agregar tutoría -->
-                <!-- Formulario para agregar tutoría -->
-                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                    <label for="codalumno">Código Alumno:</label>
-                    
-                    <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
-
-                    <label for="codtutor">Código Tutor:</label>
-                    <select name="codtutor" required>
-                        <!-- Opciones para seleccionar el código del tutor -->
+            <div class="cont_general">                       
+                <div class="contenedor-general">
+                    <div class="contenedor-datos">
                         <?php
-                        $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+                        // Configuración de la conexión a la base de datos
+                        $servername = "127.0.0.1:3307";
+                        $username = "pma";
+                        $password = "";
+                        $dbname = "sma_unayoe";
 
-                        if ($conexion->connect_error) {
-                            die("Error de conexión: " . $conexion->connect_error);
+                        // Crear la conexión
+                        $conn = new mysqli($servername, $username, $password, $dbname);
+
+                        // Verificar la conexión
+                        if ($conn->connect_error) {
+                            die("Error de conexión: " . $conn->connect_error);
                         }
 
-                        // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
-                        $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
+                        // Consulta para obtener todos los cursos
+                        $cursos_query = "SELECT * FROM curso";
+                        $cursos_result = $conn->query($cursos_query);
 
-                        while ($fila = $consulta_tutores->fetch_assoc()) {
-                            echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
+                        // Consulta para obtener todos los tutores
+                        $tutores_query = "SELECT * FROM tutor";
+                        $tutores_result = $conn->query($tutores_query);
+
+                        // Verificar si hay resultados y mostrarlos
+                        if ($cursos_result->num_rows > 0) {
+                            echo "<h2 class='titulo-seccion'>Cursos</h2>";
+                            echo "<div class='contenedor-cursos'>";
+                            echo "<ul class='lista-cursos style='padding: 0px;'>";        
+                            while ($curso = $cursos_result->fetch_assoc()) {
+                                echo "<hr>";        
+                                echo "<br><li class='item-curso' style='font-size: 20px;'>Curso: {$curso['nombre_curso']}</li>"; 
+                                echo "<li class='item-curso'>Código: {$curso['cod_curso']}</li>";                                  
+                                echo "<li class='item-curso'>Ciclo {$curso['ciclo']}</li>";
+                                echo "<li class='item-curso'>Créditos: {$curso['creditos']}</li><br>";
+                                echo "<hr>";    
+                            }
+                            echo "</ul>";                          
+                            echo "</div>";                      
+                        } else {
+                            echo "No hay cursos disponibles.";
                         }
 
-                        $conexion->close();
+                        if ($tutores_result->num_rows > 0) {
+                            echo "<h2 class='titulo-seccion'>Tutores</h2>";
+                            echo "<div class='contenedor-tutores'>";
+                            echo "<ul class='lista-tutores'>";
+                            while ($tutor = $tutores_result->fetch_assoc()) {
+                                echo "<hr>";
+                                echo "<br><li class='item-curso'>Nombre: {$tutor['nombre']}</li>"; 
+                                echo "<li class='item-curso'>Código: {$tutor['cod_tutor']}</li>";                                  
+                                echo "<li class='item-curso'>Correo {$tutor['correo']}</li>";
+                                echo "<li class='item-curso'>Numero: {$tutor['numero_celular']}</li><br>";
+                                echo "<hr>"; 
+                            }
+                            echo "</ul>";
+                            echo "</div>";
+                        } else {
+                            echo "No hay tutores disponibles.";
+                        }
+
+                        // Cerrar la conexión
+                        $conn->close();
                         ?>
-                    </select>
+                    </div>         
+                    <div class="contenedor-form">
+                        <h1 class="titulo_agregar_tutoria">Agregar Tutoría</h1>
+                        <!-- Formulario para agregar tutoría -->
+                        <!-- Formulario para agregar tutoría -->
+                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                            <label for="codalumno">Código Alumno:</label>
+                            
+                            <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
 
-                    <label for="codcurso">Código Curso:</label>
-                    <select name="codcurso" required>
-                        <!-- Opciones para seleccionar el código del curso -->
-                        <?php
-                        $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
+                            <label for="codtutor">Código Tutor:</label>
+                            <select name="codtutor" required>
+                                <!-- Opciones para seleccionar el código del tutor -->
+                                <?php
+                                $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
 
-                        if ($conexion->connect_error) {
-                            die("Error de conexión: " . $conexion->connect_error);
-                        }
+                                if ($conexion->connect_error) {
+                                    die("Error de conexión: " . $conexion->connect_error);
+                                }
 
-                        // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
-                        $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
+                                // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
+                                $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
 
-                        while ($fila = $consulta_cursos->fetch_assoc()) {
-                            echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
-                        }
+                                while ($fila = $consulta_tutores->fetch_assoc()) {
+                                    echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
+                                }
 
-                        $conexion->close();
-                        ?>
-                    </select>
+                                $conexion->close();
+                                ?>
+                            </select>
 
-                    <label for="fecha">Fecha:</label>
-                    <input type="date" name="fecha" required>
+                            <label for="codcurso">Código Curso:</label>
+                            <select name="codcurso" required>
+                                <!-- Opciones para seleccionar el código del curso -->
+                                <?php
+                                $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
 
-                    <label for="hora">Hora:</label>
-                    <input type="time" name="hora" required>
+                                if ($conexion->connect_error) {
+                                    die("Error de conexión: " . $conexion->connect_error);
+                                }
 
-                    <label for="tema">Tema:</label>
-                    <input type="text" name="tema" required>
+                                // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
+                                $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
 
-                    <button type="submit">Agregar Tutoría</button>
-                </form>     
-            </div>
-            </div>   
+                                while ($fila = $consulta_cursos->fetch_assoc()) {
+                                    echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
+                                }
+
+                                $conexion->close();
+                                ?>
+                            </select>
+
+                            <label for="fecha">Fecha:</label>
+                            <input type="date" name="fecha" required>
+
+                            <label for="hora">Hora:</label>
+                            <input type="time" name="hora" required>
+
+                            <label for="tema">Tema:</label>
+                            <input type="text" name="tema" required>
+
+                            <button type="submit">Agregar Tutoría</button>
+                        </form>     
+                    </div>
+                </div>
+            </div>     
         </div>
     </div>
 
