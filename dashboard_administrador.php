@@ -31,7 +31,6 @@ try {
     // Manejar errores de base de datos
     $ruta_foto = 'ruta/error/foto.jpg'; // Otra ruta de una imagen de error
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -46,12 +45,13 @@ try {
         .main-content {
             display: flex;
             align-items: flex-start; /* Ajustado para mover la tarjeta más arriba */
-            justify-content: flex-start; /* Ajustado para mantener la parte superior de bienvenida */
+            justify-content: space-between; /* Ajustado para alinear la tarjeta y la tabla a los extremos */
+            flex-direction: row; /* Mantenido como fila para alinear elementos horizontalmente */
         }
 
         .user-info {
             max-width: 600px; /* Ajusta el ancho según sea necesario */
-            margin-left: 20px; /* Ajustado para añadir espacio entre la imagen y la información */
+            margin-left: 10px; /* Ajustado para mover la tarjeta más a la izquierda */
             margin-top: 20px; /* Ajustado para mover la tarjeta más arriba */
         }
 
@@ -59,6 +59,34 @@ try {
             max-width: 200px;
             max-height: 200px;
             border-radius: 50%; /* Agregado para darle un borde redondeado a la imagen */
+        }
+
+        .table-container {
+            max-width: 800px; /* Ajusta el ancho máximo de la tabla según sea necesario */
+            margin-top: 20px; /* Ajusta el margen superior de la tabla según sea necesario */
+            margin-left: 10px; /* Agregado espacio entre la tarjeta y la tabla */
+            color: #fff; /* Cambiado a blanco */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px; /* Ajusta el espaciado interno de las celdas */
+            text-align: left;
+        }
+
+        th {
+            background-color: #4caf50; /* Color de fondo del encabezado de la tabla */
+            color: white;
+        }
+
+        h1 {
+            color: #fff; /* Cambiado a blanco */
         }
     </style>
 </head>
@@ -71,12 +99,13 @@ try {
                 <img src="fisi.png" alt="Logo Facultad">
             </div>
             <ul>
+                <!-- Puedes agregar enlaces adicionales según las necesidades del tutor -->
                 <li><a href="dashboard_administrador.php">Inicio</a></li>
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
                 <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
                 <li><a href="eliminar_curso.php">Eliminar Curso</a></li>
-                <li><a href="gestionar_tutoria.php">Gestionar Tutoría</a></li>
+                <!-- Otros enlaces del menú -->
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
@@ -104,35 +133,57 @@ try {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
-        </div>
-    </div>
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <p>Confirmar salida</p>
-            <div class="popup-buttons">
-                <button onclick="confirmLogout()">Confirmar</button>
-                <button onclick="hidePopup()">Rechazar</button>
+
+            <!-- Mueve el título fuera del contenedor de la tabla -->
+            <div class="table-container">
+                <h1>Tutorías Programadas</h1>
+
+                <!-- Tabla para mostrar la información de las tutorías -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Tutoría</th>
+                            <th>Código Alumno</th>
+                            <th>Código Tutor</th>
+                            <th>Código Curso</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Tema</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí debes llenar la tabla con los datos de las tutorías desde la base de datos -->
+                        <!-- Puedes utilizar un bucle PHP para recorrer los resultados y llenar las filas de la tabla -->
+                        <!-- Ejemplo: -->
+                        <?php
+                        $conexion = new mysqli("localhost", "pma", "", "sma_unayoe");
+
+                        if ($conexion->connect_error) {
+                            die("Error de conexión: " . $conexion->connect_error);
+                        }
+
+                        // Consulta para obtener la información de las tutorías
+                        $consulta_tutorias = $conexion->query("SELECT * FROM tutoría");
+
+                        while ($fila = $consulta_tutorias->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $fila['id_tutoria'] . "</td>";
+                            echo "<td>" . $fila['codalumno'] . "</td>";
+                            echo "<td>" . $fila['codtutor'] . "</td>";
+                            echo "<td>" . $fila['codcurso'] . "</td>";
+                            echo "<td>" . $fila['fecha'] . "</td>";
+                            echo "<td>" . $fila['hora'] . "</td>";
+                            echo "<td>" . $fila['tema'] . "</td>";
+                            echo "</tr>";
+                        }
+
+                        // Cierra la conexión
+                        $conexion->close();
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div class="menu-toggle" onclick="toggleSidebar()">
-        <img src="icono_menu.png" alt="Menú">
-    </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('closed');
-        }
-        function showPopup() {
-            document.getElementById('popup').style.display = 'block';
-        }
-        function hidePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
-        function confirmLogout() {
-            // Redirigir al usuario al login
-            window.location.href = 'login.php';
-        }
-    </script>
 </body>
 </html>

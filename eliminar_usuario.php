@@ -199,7 +199,6 @@ $conexion->close();
                 <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
                 <li><a href="eliminar_curso.php">Eliminar Curso</a></li>
-                <li><a href="gestionar_tutoria.php">Gestionar Tutoría</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
