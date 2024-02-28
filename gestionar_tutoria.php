@@ -1,7 +1,24 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Coloca aquí el código para gestionar la tutoría si es necesario
-    // ...
+    // Recupera los datos del formulario
+    $tutoriaId = $_POST["tutoria_id"];  // Asegúrate de que el campo del formulario coincida con el que estás utilizando
+    $accion = $_POST["accion"];
+
+    // Realiza la lógica correspondiente según la acción
+    switch ($accion) {
+        case "aprobar":
+            // Coloca aquí la lógica para aprobar la tutoría
+            break;
+        case "rechazar":
+            // Coloca aquí la lógica para rechazar la tutoría
+            break;
+        // Agrega más casos según las acciones necesarias
+
+        default:
+            // Maneja el caso por defecto o muestra un mensaje de error
+            break;
+    }
 
     // Redirigir nuevamente a la página de gestión de tutorías después de realizar la acción correspondiente
     header("Location: gestionar_tutoria.php");
@@ -85,6 +102,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .evidence-button:hover {
             background-color: #45a049; /* Cambio de color al pasar el ratón */
         }
+
+        .evidence-container {
+            display: none;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .evidence-container h2 {
+            color: #000;
+        }
+
+        .evidence-info {
+            margin-top: 10px;
+            color: #000;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .popup p {
+            color: #000;
+        }
+
+        .popup button {
+            background-color: #4caf50;
+            color: #fff;
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .popup button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -97,6 +162,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <ul>
                 <!-- Puedes agregar enlaces adicionales según las necesidades del tutor -->
                 <li><a href="dashboard_administrador.php">Inicio</a></li>
+                <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
+                <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
+                <li><a href="agregar_curso.php">Agregar Curso</a></li>
                 <li><a href="gestionar_tutoria.php">Gestionar Tutorías</a></li>
                 <!-- Otros enlaces del menú -->
                 <li><button onclick="showPopup()">Salir</button></li>
@@ -142,7 +210,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "<td>" . $fila['fecha'] . "</td>";
                         echo "<td>" . $fila['hora'] . "</td>";
                         echo "<td>" . $fila['tema'] . "</td>";
-                        echo "<td><button class='evidence-button' onclick='showEvidence(" . $fila['id_tutoria'] . ")'>Ver Evidencia</button></td>";
+                        echo "<td>
+                                <button class='evidence-button' onclick='showEvidence(" . $fila['id_tutoria'] . ")'>Ver Evidencia</button>
+                                <form method='post' action='gestionar_tutoria.php'>
+                                    <input type='hidden' name='tutoria_id' value='" . $fila['id_tutoria'] . "'>
+                                    <select name='accion'>
+                                        <option value='aprobar'>Aprobar</option>
+                                        <option value='rechazar'>Rechazar</option>
+                                    </select>
+                                    <button type='submit'>Aplicar</button>
+                                </form>
+                            </td>";
                         echo "</tr>";
                     }
 
@@ -161,11 +239,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <!-- Popup de confirmación para salir -->
     <div class="popup" id="popup">
-        <div class="popup-content">
-            <p>¿Seguro que deseas salir?</p>
-            <button onclick="location.href='index.php'">Sí</button>
-            <button onclick="hidePopup()">No</button>
-        </div>
+        <p>     Confirmar Salida</p>
+        <button onclick="confirmLogout()">Confirmar</button>
+        <button onclick="hidePopup()">Rechazar</button>
     </div>
 
     <script>
@@ -178,6 +254,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         function hidePopup() {
             document.getElementById("popup").style.display = "none";
+        }
+
+        function showPopup() {
+            document.getElementById("popup").style.display = "block";
+        }
+
+        function confirmLogout() {
+            // Redirigir al usuario al login
+            window.location.href = 'login.php';
         }
     </script>
 </body>
