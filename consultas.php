@@ -30,10 +30,11 @@ $id_usuario = obtenerIdUsuario($conn, $nombre_usuario);
 // Verificar si se ha enviado el formulario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar que todos los campos del formulario están presentes
-    if (isset($_POST['asunto'], $_POST['contenido']) && isset($_FILES['imagen'])) {
+    if (isset($_POST['asunto'], $_POST['contenido'], $_POST['tutor']) && isset($_FILES['imagen'])) {
         // Obtener los valores del formulario
         $asunto = $_POST['asunto'];
         $contenido = $_POST['contenido'];
+        $tutor = $_POST['tutor'];
         $fecha_actual = date("Y-m-d H:i:s"); // Fecha y hora actual
         
         // Obtener el id del usuario a partir del nombre en $_SESSION['nombre']
@@ -49,8 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Mueve la imagen del directorio temporal al directorio de destino
             if (move_uploaded_file($imagen_temporal, $imagen_ruta)) {
                 // Insertar los datos en la tabla de consultas
-                $stmt = $conn->prepare("INSERT INTO consulta (id_alumno, asunto, contenido, fecha_creacion, imagen_path) VALUES (:id_alumno, :asunto, :contenido, :fecha_creacion, :imagen_path)");
+                $stmt = $conn->prepare("INSERT INTO consulta (id_alumno, cod_tutor, asunto, contenido, fecha_creacion, imagen_path) VALUES (:id_alumno, :cod_tutor, :asunto, :contenido, :fecha_creacion, :imagen_path)");
                 $stmt->bindParam(':id_alumno', $id_usuario);
+                $stmt->bindParam(':cod_tutor', $tutor); // Agregar el cod_tutor seleccionado
                 $stmt->bindParam(':asunto', $asunto);
                 $stmt->bindParam(':contenido', $contenido);
                 $stmt->bindParam(':fecha_creacion', $fecha_actual);
@@ -63,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Error al crear la consulta
                     echo "<script>alert('Error al crear la consulta.');</script>";
                 }
+
             } else {
                 // Hubo un error al subir la imagen
                 echo "<script>alert('Error al subir la imagen.');</script>";
@@ -93,7 +96,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
         echo "<script>alert('Error al eliminar la consulta.');</script>";
     }
 }
+
+// Consulta SQL para obtener los tutores disponibles
+$stmt_tutores = $conn->prepare("SELECT cod_tutor, nombre, apellidos FROM tutor");
+$stmt_tutores->execute();
+$tutores = $stmt_tutores->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -314,8 +324,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
                 <li><a href="dashboard_alumno.php">Inicio</a></li>
                 <li><a href="cursos.php">Cursos</a></li>
                 <li><a href="dashboard_tutorias.php">Tutorías</a></li>
-                <li><a href="consultas.php">Consultas</a></li>
+                <li><a href="horario.php">Horario</a></li>
                 <li><a href="objetivos.php">Objetivos</a></li>
+                <li><a href="consultas.php">Consultas</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
@@ -332,7 +343,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
             <div class="consultas-section">
                 <?php
                  // Consulta SQL para obtener las consultas del usuario
-                 $stmt = $conn->prepare("SELECT id_consulta, asunto, contenido, fecha_creacion, imagen_path FROM consulta WHERE id_alumno = :id_alumno ORDER BY fecha_creacion DESC");
+                 $stmt = $conn->prepare("SELECT c.id_consulta, c.asunto, c.contenido, c.fecha_creacion, c.imagen_path, t.nombre, t.apellidos FROM consulta c LEFT JOIN tutor t ON c.cod_tutor = t.cod_tutor WHERE c.id_alumno = :id_alumno ORDER BY c.fecha_creacion DESC");
                  $stmt->bindParam(':id_alumno', $id_usuario);
                  $stmt->execute();
                  $consultas = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -348,8 +359,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
                     echo "<div class='consulta-content'><strong>Asunto:</strong> " . $consulta['asunto'] . "</div>";
                     echo "<div class='consulta-content'><strong>Contenido:</strong> " . $consulta['contenido'] . "</div>";
                     echo "<div class='consulta-date'><strong>Fecha de creación:</strong> " . $consulta['fecha_creacion'] . "</div>";
+                    if ($consulta['nombre'] && $consulta['apellidos']) {
+                        echo "<div class='consulta-tutor'><strong>Tutor:</strong> " . $consulta['nombre'] . " " . $consulta['apellidos'] . "</div>";
+                    } else {
+                        echo "<div class='consulta-tutor'><strong>Tutor:</strong> Desconocido</div>";
+                    }
                     echo "</div>"; // Cierre del div de la tarjeta de consulta
                 }
+            
                 ?>
             </div>
         </div>
@@ -364,6 +381,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
             <textarea id="consulta-contenido" name="consulta-contenido" rows="4" cols="50"></textarea><br>
             <label for="imagen">Imagen:</label><br>
             <input type="file" id="imagen" name="imagen"><br><br>
+
+            <!-- Sección para seleccionar el tutor -->
+            <label for="tutor">Seleccionar tutor:</label><br>
+            <select id="tutor" name="tutor">
+                <?php foreach ($tutores as $tutor): ?>
+                    <option value="<?php echo $tutor['cod_tutor']; ?>"><?php echo $tutor['nombre'] . ' ' . $tutor['apellidos']; ?></option>
+                <?php endforeach; ?>
+            </select><br>
+
+
+
             <div class="popup-buttons">
                 <button class="cancel" onclick="hideConsultaPopup()">Cancelar</button>
                 <button onclick="saveConsulta()">Guardar</button>
@@ -432,12 +460,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
         var asunto = document.getElementById('consulta-asunto').value;
         var contenido = document.getElementById('consulta-contenido').value;
         var imagen = document.getElementById('imagen').files[0]; // Obtener la imagen seleccionada
+        var tutor = document.getElementById('tutor').value; // Obtener el valor del tutor seleccionado
 
         // Crear un objeto FormData para enviar datos de formulario y archivos
         var formData = new FormData();
         formData.append('asunto', asunto);
         formData.append('contenido', contenido);
         formData.append('imagen', imagen);
+        formData.append('tutor', tutor); // Agregar el tutor seleccionado al formulario
 
         // Crear una solicitud AJAX
         var xhr = new XMLHttpRequest();
@@ -479,16 +509,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete_consulta_id']))
     }
 }
 
-
     function viewImage(imagePath) {
-        // Mostrar el pop-up de la imagen
+        var popupImage = document.getElementById('popup-image');
+        popupImage.src = imagePath;
         document.getElementById('image-popup').style.display = 'block';
-        // Establecer la imagen en el pop-up
-        document.getElementById('popup-image').src = imagePath;
     }
 
     function closeImagePopup() {
-        // Ocultar el pop-up de la imagen
         document.getElementById('image-popup').style.display = 'none';
     }
 </script>
