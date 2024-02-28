@@ -24,15 +24,13 @@ try {
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         $ruta_foto = empty($resultado['ruta_foto']) ? 'ruta/por/defecto/foto.jpg' : $resultado['ruta_foto'];
     } else {
-        // Si el usuario no se encuentra, mostrar una imagen por defecto
+        // Si el usuario no se encuentra, mostrar la imagen por defecto
         $ruta_foto = 'ruta/por/defecto/foto.jpg';
     }
 } catch(PDOException $e) {
     // Manejar errores de base de datos
     $ruta_foto = 'ruta/error/foto.jpg'; // Otra ruta de una imagen de error
 }
-
-// Puedes seguir adaptando el código según las necesidades específicas del administrador
 ?>
 
 <!DOCTYPE html>
@@ -42,8 +40,57 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
     <link rel="stylesheet" type="text/css" href="css/style_Administrador.css"><!-- Asegúrate de tener un archivo CSS específico para el administrador -->
+    <style>
+        /* Estilos adicionales para mejorar la apariencia */
+        .main-content {
+            display: flex;
+            align-items: flex-start; /* Ajustado para mover la tarjeta más arriba */
+            justify-content: space-between; /* Ajustado para alinear la tarjeta y la tabla a los extremos */
+            flex-direction: row; /* Mantenido como fila para alinear elementos horizontalmente */
+        }
+
+        .user-info {
+            max-width: 600px; /* Ajusta el ancho según sea necesario */
+            margin-left: 10px; /* Ajustado para mover la tarjeta más a la izquierda */
+            margin-top: 20px; /* Ajustado para mover la tarjeta más arriba */
+        }
+
+        .user-photo img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 50%; /* Agregado para darle un borde redondeado a la imagen */
+        }
+
+        .table-container {
+            max-width: 800px; /* Ajusta el ancho máximo de la tabla según sea necesario */
+            margin-top: 20px; /* Ajusta el margen superior de la tabla según sea necesario */
+            margin-left: 10px; /* Agregado espacio entre la tarjeta y la tabla */
+            color: #fff; /* Cambiado a blanco */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px; /* Ajusta el espaciado interno de las celdas */
+            text-align: left;
+        }
+
+        th {
+            background-color: #4caf50; /* Color de fondo del encabezado de la tabla */
+            color: white;
+        }
+
+        h1 {
+            color: #fff; /* Cambiado a blanco */
+        }
+    </style>
 </head>
-    
+
 <body>
 
     <div class="container">
@@ -52,65 +99,91 @@ try {
                 <img src="fisi.png" alt="Logo Facultad">
             </div>
             <ul>
+                <!-- Puedes agregar enlaces adicionales según las necesidades del tutor -->
                 <li><a href="dashboard_administrador.php">Inicio</a></li>
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
+                <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
-                <li><a href="agregar_tutoria.php">Agregar Tutoria</a></li>
+                <li><a href="eliminar_curso.php">Eliminar Curso</a></li>
+                <!-- Otros enlaces del menú -->
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $nombre_usuario . "</div>";
-
-                // Mostrar la foto del usuario
+                echo "<div class='user-info card'>";
+                echo "<div class='card-header'><h3>Bienvenido, $nombre_usuario</h3></div>";
+                echo "<div class='card-body'>";
                 echo "<div class='user-photo'>";
-                echo "<img src='$ruta_foto' alt='Foto del usuario'>";
+                if (file_exists($ruta_foto) && is_readable($ruta_foto)) {
+                    echo "<img src='$ruta_foto' alt='Foto del usuario'>";
+                } else {
+                    echo "<img src='foto_default.png' alt='Foto del usuario por defecto'>";
+                }
                 echo "</div>";
 
-                // Mensaje de bienvenida
-                echo "<div class='admin-info card'>";
-                echo "<div class='card-header'><h3>Información del Administrador:</h3></div>";
-                echo "<div class='card-body'>";
+                echo "<div class='admin-info'>";
                 echo "<p>Administrador: <span>$nombre_usuario</span></p>";
                 echo "</div>";
                 echo "</div>";
+                echo "</div>";
 
-                // Puedes continuar añadiendo más secciones según sea necesario
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
-        </div>
-    </div>
-    <div class="popup" id="popup">
-        <div class="popup-content">
-            <p>Confirmar salida</p>
-            <div class="popup-buttons">
-                <button onclick="confirmLogout()">Confirmar</button>
-                <button onclick="hidePopup()">Rechazar</button>
+
+            <!-- Mueve el título fuera del contenedor de la tabla -->
+            <div class="table-container">
+                <h1>Tutorías Programadas</h1>
+
+                <!-- Tabla para mostrar la información de las tutorías -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID Tutoría</th>
+                            <th>Código Alumno</th>
+                            <th>Código Tutor</th>
+                            <th>Código Curso</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Tema</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí debes llenar la tabla con los datos de las tutorías desde la base de datos -->
+                        <!-- Puedes utilizar un bucle PHP para recorrer los resultados y llenar las filas de la tabla -->
+                        <!-- Ejemplo: -->
+                        <?php
+                        $conexion = new mysqli("localhost", "pma", "", "sma_unayoe");
+
+                        if ($conexion->connect_error) {
+                            die("Error de conexión: " . $conexion->connect_error);
+                        }
+
+                        // Consulta para obtener la información de las tutorías
+                        $consulta_tutorias = $conexion->query("SELECT * FROM tutoría");
+
+                        while ($fila = $consulta_tutorias->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<td>" . $fila['id_tutoria'] . "</td>";
+                            echo "<td>" . $fila['codalumno'] . "</td>";
+                            echo "<td>" . $fila['codtutor'] . "</td>";
+                            echo "<td>" . $fila['codcurso'] . "</td>";
+                            echo "<td>" . $fila['fecha'] . "</td>";
+                            echo "<td>" . $fila['hora'] . "</td>";
+                            echo "<td>" . $fila['tema'] . "</td>";
+                            echo "</tr>";
+                        }
+
+                        // Cierra la conexión
+                        $conexion->close();
+                        ?>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-    <div class="menu-toggle" onclick="toggleSidebar()">
-        <img src="icono_menu.png" alt="Menú">
-    </div>
-    <script>
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('closed');
-        }
-        function showPopup() {
-            document.getElementById('popup').style.display = 'block';
-        }
-        function hidePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
-        function confirmLogout() {
-            // Redirigir al usuario al login
-            window.location.href = 'login.php';
-        }
-    </script>
 </body>
 </html>

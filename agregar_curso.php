@@ -134,8 +134,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <ul>
                 <li><a href="dashboard_administrador.php">Inicio</a></li>
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
+                <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
-                <li><a href="agregar_tutoria.php">Agregar Tutoria</a></li>
+                <li><a href="eliminar_curso.php">Eliminar Curso</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>

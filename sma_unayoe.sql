@@ -286,6 +286,25 @@ END
 $$
 DELIMITER ;
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `consulta`
+--
+CREATE TABLE consulta (
+  id_consulta int NOT NULL AUTO_INCREMENT,
+  id_alumno int NOT NULL,
+  asunto varchar(100) NOT NULL,
+  contenido text NOT NULL,
+  fecha_creacion datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  respondida tinyint(1) NOT NULL DEFAULT '0',
+  respuesta text,
+  PRIMARY KEY (id_consulta),
+  KEY id_alumno (id_alumno),
+  CONSTRAINT fk_alumno_consulta FOREIGN KEY (id_alumno) REFERENCES alumno (id_usuario) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 --
 -- Índices para tablas volcadas
 --
@@ -415,6 +434,20 @@ ALTER TABLE `tutoría`
   ADD CONSTRAINT `tutoría_ibfk_2` FOREIGN KEY (`codtutor`) REFERENCES `tutor` (`cod_tutor`),
   ADD CONSTRAINT `tutoría_ibfk_3` FOREIGN KEY (`codcurso`) REFERENCES `curso` (`cod_curso`);
 COMMIT;
+
+
+ALTER TABLE consulta
+ADD COLUMN imagen_path VARCHAR(255);
+
+ALTER TABLE consulta
+ADD COLUMN cod_tutor varchar(20) NOT NULL;
+
+ALTER TABLE consulta
+ADD CONSTRAINT fk_tutor_consulta
+FOREIGN KEY (cod_tutor)
+REFERENCES tutor (cod_tutor)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
