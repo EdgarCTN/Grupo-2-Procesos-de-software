@@ -229,7 +229,7 @@ DELIMITER ;
 --
 
 CREATE TABLE `tutoría` (
-  `id_tutoria` int AUTO_INCREMENT,
+  `id_tutoria` int NOT NULL,
   `codalumno` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
   `codtutor` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
   `codcurso` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
