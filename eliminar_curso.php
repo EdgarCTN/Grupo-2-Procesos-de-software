@@ -8,15 +8,13 @@ if ($conexion->connect_error) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar"])) {
     // Recuperar y procesar los datos del formulario
-    $codigo_usuario = $_POST["codigo"];
-    $nombre_usuario = $_POST["nombre_usuario"];
-    $rol = ucfirst($_POST["rol"]);
+    $codigo_curso = $_POST["codigo_curso"] ?? '';
 
     // Desactivar restricciones de clave externa temporalmente
     $conexion->query("SET foreign_key_checks = 0");
 
     // Realizar la eliminación
-    $resultado = eliminarUsuario($codigo_usuario, $rol);
+    $resultado = eliminarCurso($codigo_curso);
 
     // Volver a activar restricciones de clave externa
     $conexion->query("SET foreign_key_checks = 1");
@@ -25,34 +23,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["eliminar"])) {
     echo $resultado;
 }
 
-// Obtener la lista de usuarios (alumnos y tutores)
-$sql = "SELECT id, nombre, nombre_usuario, rol FROM usuarios WHERE rol IN ('Alumno', 'Tutor')";
+// Obtener la lista de cursos
+$sql = "SELECT ciclo, nombre_curso, cod_curso, creditos FROM curso";
 $resultado = $conexion->query($sql);
 
-// Función para eliminar al usuario y la tutoría asociada si existe
-function eliminarUsuario($codigo_usuario, $rol)
+// Función para eliminar el curso y las tutorías asociadas si existen
+function eliminarCurso($codigo_curso)
 {
     global $conexion;
 
-    // Eliminar la tutoría asociada si existe
-    $sql_eliminar_tutoria = ($rol === 'Tutor') ? "DELETE FROM tutoría WHERE codtutor = ?" : "DELETE FROM tutoría WHERE codalumno = ?";
-    $stmt_eliminar_tutoria = $conexion->prepare($sql_eliminar_tutoria);
-    $stmt_eliminar_tutoria->bind_param("s", $codigo_usuario);
+    // Eliminar las tutorías asociadas si existen
+    $stmt_eliminar_tutorias = $conexion->prepare("DELETE FROM tutoría WHERE codcurso = ?");
+    $stmt_eliminar_tutorias->bind_param("s", $codigo_curso);
 
-    if (!$stmt_eliminar_tutoria->execute()) {
-        return "Error al eliminar tutoría: " . $stmt_eliminar_tutoria->error;
+    if (!$stmt_eliminar_tutorias->execute()) {
+        return "Error al eliminar las tutorías: " . $stmt_eliminar_tutorias->error;
     }
 
-    // Eliminar el usuario de las tablas dependiendo del rol
-    $sql_eliminar_usuario = "DELETE usuarios, $rol FROM usuarios LEFT JOIN $rol ON usuarios.id = $rol.id_usuario WHERE usuarios.id = ?";
-    $stmt_eliminar_usuario = $conexion->prepare($sql_eliminar_usuario);
-    $stmt_eliminar_usuario->bind_param("s", $codigo_usuario);
+    // Eliminar el curso
+    $stmt_eliminar_curso = $conexion->prepare("DELETE FROM curso WHERE cod_curso = ?");
+    $stmt_eliminar_curso->bind_param("s", $codigo_curso);
 
-    if ($stmt_eliminar_usuario->execute()) {
-        $stmt_eliminar_usuario->close();
-        return "Usuario eliminado correctamente.";
+    if ($stmt_eliminar_curso->execute()) {
+        $stmt_eliminar_curso->close();
+        return "Curso eliminado correctamente.";
     } else {
-        return "Error al eliminar el usuario: " . $stmt_eliminar_usuario->error;
+        return "Error al eliminar el curso: " . $stmt_eliminar_curso->error;
     }
 }
 
@@ -60,14 +56,12 @@ function eliminarUsuario($codigo_usuario, $rol)
 $conexion->close();
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eliminar Usuario - Dashboard</title>
+    <title>Eliminar Curso - Dashboard</title>
     <link rel="stylesheet" type="text/css" href="css/style_Tutor.css">
     <!-- Asegúrate de tener un archivo CSS específico para el tutor -->
     <style>
@@ -198,38 +192,34 @@ $conexion->close();
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
                 <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
-                <li><a href="eliminar_curso.php">Eliminar Curso</a></li>
                 <li><a href="gestionar_tutoria.php">Gestionar Tutoría</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
         <div class="main-content">
-            <h1>Eliminar Usuario</h1>
+            <h1>Eliminar Curso</h1>
 
-            <!-- Tabla de usuarios con opción de eliminar -->
+            <!-- Tabla de cursos con opción de eliminar -->
             <?php
             if ($resultado->num_rows > 0) {
                 echo "<table>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Nombre de Usuario</th>
-                            <th>Rol</th>
+                            <th>Ciclo</th>
+                            <th>Nombre del Curso</th>
+                            <th>Código del Curso</th>
+                            <th>Créditos</th>
                             <th>Acciones</th>
                         </tr>";
 
                 while ($fila = $resultado->fetch_assoc()) {
                     echo "<tr>
-                            <td>{$fila['id']}</td>
-                            <td>{$fila['nombre']}</td>
-                            <td>{$fila['nombre_usuario']}</td>
-                            <td>{$fila['rol']}</td>
+                            <td>{$fila['ciclo']}</td>
+                            <td>{$fila['nombre_curso']}</td>
+                            <td>{$fila['cod_curso']}</td>
+                            <td>{$fila['creditos']}</td>
                             <td>
-                                <form method='post' action='eliminar_usuario.php' onsubmit='return confirmarEliminacion(\"{$fila['id']}\", \"{$fila['nombre_usuario']}\", \"{$fila['rol']}\")'>
-                                    <input type='hidden' name='codigo' value='{$fila['id']}'>
-                                    <input type='hidden' name='nombre_usuario' value='{$fila['nombre_usuario']}'>
-                                    <input type='hidden' name='rol' value='{$fila['rol']}'>
-                                    <input type='hidden' name='contrasena' value=''>
+                                <form method='post' action='eliminar_curso.php' onsubmit='return confirmarEliminacion(\"{$fila['cod_curso']}\")'>
+                                    <input type='hidden' name='codigo_curso' value='{$fila['cod_curso']}'>
                                     <button type='submit' name='eliminar'>Eliminar</button>
                                 </form>
                             </td>
@@ -238,7 +228,7 @@ $conexion->close();
 
                 echo "</table>";
             } else {
-                echo "No se encontraron usuarios.";
+                echo "No se encontraron cursos.";
             }
             ?>
         </div>
@@ -272,8 +262,8 @@ $conexion->close();
         }
     </script>
     <script>
-        function confirmarEliminacion(codigoUsuario, nombreUsuario, rol) {
-            return confirm(`¿Estás seguro que deseas eliminar al usuario ${nombreUsuario}?`);
+        function confirmarEliminacion(codigoCurso) {
+            return confirm(`¿Estás seguro que deseas eliminar el curso con código ${codigoCurso}?`);
         }
     </script>
 </body>
