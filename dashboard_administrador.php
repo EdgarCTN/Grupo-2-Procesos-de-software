@@ -24,7 +24,7 @@ try {
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
         $ruta_foto = empty($resultado['ruta_foto']) ? 'ruta/por/defecto/foto.jpg' : $resultado['ruta_foto'];
     } else {
-        // Si el usuario no se encuentra, mostrar una imagen por defecto
+        // Si el usuario no se encuentra, mostrar la imagen por defecto
         $ruta_foto = 'ruta/por/defecto/foto.jpg';
     }
 } catch(PDOException $e) {
@@ -32,7 +32,6 @@ try {
     $ruta_foto = 'ruta/error/foto.jpg'; // Otra ruta de una imagen de error
 }
 
-// Puedes seguir adaptando el código según las necesidades específicas del administrador
 ?>
 
 <!DOCTYPE html>
@@ -42,8 +41,28 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
     <link rel="stylesheet" type="text/css" href="css/style_Administrador.css"><!-- Asegúrate de tener un archivo CSS específico para el administrador -->
+    <style>
+        /* Estilos adicionales para mejorar la apariencia */
+        .main-content {
+            display: flex;
+            align-items: flex-start; /* Ajustado para mover la tarjeta más arriba */
+            justify-content: flex-start; /* Ajustado para mantener la parte superior de bienvenida */
+        }
+
+        .user-info {
+            max-width: 600px; /* Ajusta el ancho según sea necesario */
+            margin-left: 20px; /* Ajustado para añadir espacio entre la imagen y la información */
+            margin-top: 20px; /* Ajustado para mover la tarjeta más arriba */
+        }
+
+        .user-photo img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 50%; /* Agregado para darle un borde redondeado a la imagen */
+        }
+    </style>
 </head>
-    
+
 <body>
 
     <div class="container">
@@ -56,29 +75,30 @@ try {
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
                 <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
-                <li><a href="gestionar_tutoria.php">Gestionar Tutoria</a></li>
+                <li><a href="gestionar_tutoria.php">Gestionar Tutoría</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
         <div class="main-content">
             <?php
             if (isset($_SESSION['nombre'])) {
-                echo "<div class='welcome-message'>Bienvenido, " . $nombre_usuario . "</div>";
-
-                // Mostrar la foto del usuario
+                echo "<div class='user-info card'>";
+                echo "<div class='card-header'><h3>Bienvenido, $nombre_usuario</h3></div>";
+                echo "<div class='card-body'>";
                 echo "<div class='user-photo'>";
-                echo "<img src='$ruta_foto' alt='Foto del usuario'>";
+                if (file_exists($ruta_foto) && is_readable($ruta_foto)) {
+                    echo "<img src='$ruta_foto' alt='Foto del usuario'>";
+                } else {
+                    echo "<img src='foto_default.png' alt='Foto del usuario por defecto'>";
+                }
                 echo "</div>";
 
-                // Mensaje de bienvenida
-                echo "<div class='admin-info card'>";
-                echo "<div class='card-header'><h3>Información del Administrador:</h3></div>";
-                echo "<div class='card-body'>";
+                echo "<div class='admin-info'>";
                 echo "<p>Administrador: <span>$nombre_usuario</span></p>";
                 echo "</div>";
                 echo "</div>";
+                echo "</div>";
 
-                // Puedes continuar añadiendo más secciones según sea necesario
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
