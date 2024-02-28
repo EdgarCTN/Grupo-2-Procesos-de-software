@@ -10,7 +10,7 @@ if (isset($_GET['codigo'])) {
     // Obtener el código del alumno desde la URL
     $cod_alumno = $_GET['codigo'];
 
-    // Consultar la base de datos para obtener los detalles del alumno
+    // Consultar la base de datos para obtener los detalles del alumno y sus cursos
     $servername = "localhost";
     $username = "pma";
     $password = "";
@@ -25,17 +25,24 @@ if (isset($_GET['codigo'])) {
     }
 
     // Consulta SQL para obtener los detalles del alumno
-    $sql = "SELECT * FROM alumno WHERE cod_alumno = '$cod_alumno'";
-    $result = $conn->query($sql);
+    $sql_alumno = "SELECT * FROM alumno WHERE cod_alumno = '$cod_alumno'";
+    $result_alumno = $conn->query($sql_alumno);
 
-    if ($result->num_rows > 0) {
+    // Consulta SQL para obtener los cursos del alumno
+    $sql_cursos = "SELECT curso.* FROM curso
+                    JOIN tutoría ON curso.cod_curso = tutoría.codcurso
+                    WHERE tutoría.codalumno = '$cod_alumno'";
+    $result_cursos = $conn->query($sql_cursos);
+
+    if ($result_alumno->num_rows > 0) {
         // Mostrar los detalles del alumno
-        $row = $result->fetch_assoc();
-        $nombre = $row['nombre'];
-        $apellidos = $row['apellidos'];
-        $correo = $row['correo'];
-        $facultad = $row['facultad'];
-        $numero_celular = $row['numero_celular'];
+        $row_alumno = $result_alumno->fetch_assoc();
+        $nombre = $row_alumno['nombre'];
+        $apellidos = $row_alumno['apellidos'];
+        $correo = $row_alumno['correo'];
+        $facultad = $row_alumno['facultad'];
+        $numero_celular = $row_alumno['numero_celular'];
+
         // Mostrar los detalles del alumno en HTML
         echo "<!DOCTYPE html>";
         echo "<html lang='es'>";
@@ -61,7 +68,7 @@ if (isset($_GET['codigo'])) {
         echo "  margin-left: -50px;"; // Mover el panel a la izquierda
         echo "  width: calc(100% - 40px);"; // Restar el doble del margen izquierdo
         echo "}";
-        echo ".panel-estadisticas {";
+        echo ".panel-curso {";
         echo "  background-color: rgba(255, 255, 255, 0.8);"; // Agregar transparencia al panel
         echo "  padding: 20px;";
         echo "  border-radius: 10px;";
@@ -84,10 +91,34 @@ if (isset($_GET['codigo'])) {
         echo "</div>";
         echo "</div>";
 
-        echo "<div class='col-md-6'>"; // Utilizamos la otra mitad del ancho disponible para el nuevo panel
-        echo "<div class='panel-estadisticas'>";
-        echo "<h2 style='text-align: center; margin-bottom: 20px;'>Estadísticas del alumno</h2>"; // Título centrado
-        // Aquí puedes agregar las estadísticas del alumno si las tienes
+        echo "<div class='col-md-6'>"; // Utilizamos la otra mitad del ancho disponible para el panel de cursos
+        echo "<div class='panel-curso'>";
+        echo "<h2 style='text-align: center; margin-bottom: 20px;'>Detalles de curso</h2>"; // Título centrado
+        // Mostrar los detalles de los cursos del alumno en una tabla
+        if ($result_cursos->num_rows > 0) {
+            echo "<table class='table'>";
+            echo "<thead>";
+            echo "<tr>";
+            echo "<th>Código de Curso</th>";
+            echo "<th>Nombre de Curso</th>";
+            echo "<th>Ciclo</th>";
+            echo "<th>Créditos</th>";
+            echo "</tr>";
+            echo "</thead>";
+            echo "<tbody>";
+            while ($row_curso = $result_cursos->fetch_assoc()) {
+                echo "<tr>";
+                echo "<td>" . $row_curso['cod_curso'] . "</td>";
+                echo "<td>" . $row_curso['nombre_curso'] . "</td>";
+                echo "<td>" . $row_curso['ciclo'] . "</td>";
+                echo "<td>" . $row_curso['creditos'] . "</td>";
+                echo "</tr>";
+            }
+            echo "</tbody>";
+            echo "</table>";
+        } else {
+            echo "El alumno no está inscrito en ningún curso.";
+        }
         echo "</div>";
         echo "</div>";
 
@@ -104,4 +135,3 @@ if (isset($_GET['codigo'])) {
     echo "No se proporcionó el código del alumno.";
 }
 ?>
-
