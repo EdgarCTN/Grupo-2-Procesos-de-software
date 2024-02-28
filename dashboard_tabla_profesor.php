@@ -100,6 +100,16 @@ try {
       background-color: #218838;
       border-color: #1e7e34;
     }
+    .btn-lista-alumnos {
+      color: #fff;
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    .btn-lista-alumnos:hover {
+      color: #fff;
+      background-color: #0056b3;
+      border-color: #004275;
+    }
     .btn-regresar {
       position: absolute;
       top: 45px;
@@ -110,7 +120,7 @@ try {
 <body>
 <div class="container">
     <a href="dashboard_tutor.php" class="btn btn-primary btn-regresar">Volver</a> <!-- Botón de regresar -->
-  <h2><br>Alumnos observados (asignados):</h2><br>
+  <h2><br>Alumnos observados - Asignados</h2><br>
   <div style="overflow-x:auto;">
     <table class="table table-striped" id="tablaAlumnos">
       <thead>
@@ -119,7 +129,7 @@ try {
         <th>Nombre</th>
         <th>Apellidos</th>
         <th>Correo</th>
-        <th>Acción</th> <!-- Columna para el botón de detalles -->
+        <th>Revisar</th> <!-- Columna para el botón de detalles -->
       </tr>
       </thead>
       <tbody>
@@ -181,6 +191,14 @@ try {
           extend: 'excel',
           className: 'btn btn-excel',
           text: 'Exportar a Excel'
+        },
+        {
+          extend: 'excel',
+          className: 'btn btn-excel',
+          text: 'Lista de alumnos',
+          action: function (e, dt, node, config) {
+            window.location.href = 'dashboard_tabla_profesor_2.php'; // Cambiar la URL según sea necesario
+          }
         }
       ]
     });
