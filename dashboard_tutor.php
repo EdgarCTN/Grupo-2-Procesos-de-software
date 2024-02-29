@@ -163,7 +163,7 @@ try {
                 <li><a href="dashboard_tutor.php">Inicio</a></li>
                 <li><a href="dashboard_tabla_profesor.php">Alumnos</a></li>
                 <li><a href="dashboard_tutorias_profesor.php">Tutorias</a></li>
-                <li><a href="consultas_tutor.php">Consultas</a></li>
+
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
@@ -202,21 +202,8 @@ try {
                 echo "</div>";
                 echo "</div>";
                 
-                // Puedes agregar más detalles según sea necesario
-                echo "<div class='details'><h3>Distribución de alumnos";
-                echo "</div>";
 
-                // Agregar la tabla de cursos y número de alumnos
-                echo "<div class='course-table'>";
-                echo "<table>";
-                echo "<tr><th>Nombre del curso</th><th>Ciclo </th><th>Número de alumnos</th></tr>";
-                echo "<tr><td>Procesos de software</td><td>4</td><td>6</td></tr>"; // Ejemplo de ciclo y datos
-                echo "<tr><td>Curso X</td><td>5</td><td>30</td></tr>"; // Ejemplo de ciclo y datos
-                // Puedes agregar más filas según sea necesario
-                echo "</table>";
-                echo "</div>";
-                echo "</div>";
-                echo "</div>";
+   
 
             } else {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
@@ -254,3 +241,4 @@ try {
     </script>
 </body>
 </html>
+
