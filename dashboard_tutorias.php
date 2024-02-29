@@ -10,52 +10,6 @@ include 'conn/connection.php';
 
 $nombre_usuario = $_SESSION['nombre'];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Recuperar y procesar los datos del formulario
-    $codalumno = $_POST["codalumno"];
-    $codtutor = $_POST["codtutor"];
-    $codcurso = $_POST["codcurso"];
-    $fecha = $_POST["fecha"];
-    $hora = $_POST["hora"];
-    $tema = $_POST["tema"];
-
-    // Conectar a la base de datos
-    $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
-
-    // Verificar la conexión
-    if ($conexion->connect_error) {
-        die("Error de conexión: " . $conexion->connect_error);
-    }
-
-    try {
-        // Comenzar una transacción
-        $conexion->begin_transaction();
-
-        // Preparar la consulta para insertar una nueva tutoría
-        $consulta_tutoria = $conexion->prepare("INSERT INTO tutoría (codalumno, codtutor, codcurso, fecha, hora, tema) VALUES (?, ?, ?, ?, ?, ?)");
-
-        // Vincular los parámetros y ejecutar la consulta
-        $consulta_tutoria->bind_param("ssssss", $codalumno, $codtutor, $codcurso, $fecha, $hora, $tema);
-        $consulta_tutoria->execute();
-
-        // Confirmar la transacción
-        $conexion->commit();
-
-        // Cerrar la conexión
-        $conexion->close();
-
-        // Redirigir a la página de tutorías después de agregar la tutoría
-        header("Location: dashboard_tutorias.php");
-        exit;
-    } catch (Exception $e) {
-        // Revertir la transacción en caso de error
-        $conexion->rollback();
-
-        // Manejar el error (puedes personalizar según tus necesidades)
-        echo "Error al agregar tutoría: " . $e->getMessage();
-    }
-}
-
 try {
     // Preparar la consulta SQL para obtener el ID del usuario basado en el nombre de usuario
     $stmt_usuario = $conn->prepare("SELECT id FROM usuarios WHERE nombre_usuario = :nombre_usuario");
@@ -99,6 +53,165 @@ try {
     $apellidos = "Error";
     $nombre = "Error";
     $facultad = "Error";
+}
+/*
+try {
+    // Preparar la consulta SQL para obtener los datos de la primera tutoría del tutor
+    $stmt_tutoria = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, a.apellidos, a.nombre
+                                    FROM tutoría AS t
+                                    INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                    INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                    INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                    INNER JOIN usuarios AS u ON tu.id_usuario = u.id
+                                    WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_tutoria->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_tutoria->execute();
+
+    // Verificar si se encontró una tutoría para el tutor
+    if ($stmt_tutoria->rowCount() > 0) {
+        $resultado_tutoria = $stmt_tutoria->fetch(PDO::FETCH_ASSOC);
+        $fecha_tutoria = "<span class='texto'><strong>Fecha:</strong></span> " . $resultado_tutoria['fecha'];
+        $hora_tutoria = "<span class='texto'><strong>Hora:</strong></span> " . $resultado_tutoria['hora'];
+        $tema_tutoria = "<span class='texto'><strong>Tema:</strong></span> " . $resultado_tutoria['tema'];
+        $nombre_curso = $resultado_tutoria['nombre_curso'];
+        $apellidos_tutor = "<span class='texto'><strong>Alumno:</strong></span> " . $resultado_tutoria['apellidos'];
+        $nombre_tutor = "<span class='texto'><strong>Alumno:</strong></span> " . $resultado_tutoria['nombre'];
+    } else {
+        // Si no se encontró una tutoría, mostrar un mensaje o asignar valores por defecto
+        $fecha_tutoria = "No hay tutorías programadas";
+        $hora_tutoria = "";
+        $tema_tutoria = "";
+        $nombre_curso = "";
+        $apellidos_tutor = "";
+        $nombre_tutor = "";
+    }
+
+    // Preparar la consulta SQL para obtener la lista de tutorías del mismo tutor
+    $stmt_lista_tutorias = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, a.apellidos, a.nombre
+                                           FROM tutoría AS t
+                                           INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                           INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                           INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                           INNER JOIN usuarios AS u ON tu.id_usuario = u.id
+                                           WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_lista_tutorias->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_lista_tutorias->execute();
+
+    // Guardar las tutorías del tutor en un array
+    $tutorias = $stmt_lista_tutorias->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $fecha_tutoria = "Error al obtener las tutorías";
+    $hora_tutoria = "";
+    $tema_tutoria = "";
+    $nombre_curso = "";
+    $apellidos_tutor = "";
+    $nombre_tutor = "";
+}*/
+/*
+try {
+    // Preparar la consulta SQL para obtener los datos de la primera tutoría del tutor
+    $stmt_tutoria = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, a.apellidos, a.nombre
+                                    FROM tutoría AS t
+                                    INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                    INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                    INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                    INNER JOIN usuarios AS u ON tu.id_usuario = u.id
+                                    WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_tutoria->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_tutoria->execute();
+
+    // Verificar si se encontró una tutoría para el tutor
+    if ($stmt_tutoria->rowCount() > 0) {
+        $resultado_tutoria = $stmt_tutoria->fetch(PDO::FETCH_ASSOC);
+        $fecha_tutoria = "<span class='texto'><strong>Fecha:</strong></span> " . $resultado_tutoria['fecha'];
+        $hora_tutoria = "<span class='texto'><strong>Hora:</strong></span> " . $resultado_tutoria['hora'];
+        $tema_tutoria = "<span class='texto'><strong>Tema:</strong></span> " . $resultado_tutoria['tema'];
+        $nombre_curso = $resultado_tutoria['nombre_curso'];
+        $apellidos_tutor = "<span class='texto'><strong>Alumno:</strong></span> " . $resultado_tutoria['apellidos'];
+        $nombre_tutor = "<span class='texto'><strong>Alumno:</strong></span> " . $resultado_tutoria['nombre'];
+    } else {
+        // Si no se encontró una tutoría, mostrar un mensaje o asignar valores por defecto
+        $fecha_tutoria = "No hay tutorías programadas";
+        $hora_tutoria = "";
+        $tema_tutoria = "";
+        $nombre_curso = "";
+        $apellidos_tutor = "";
+        $nombre_tutor = "";
+    }
+
+    // Preparar la consulta SQL para obtener la lista de tutorías del mismo tutor
+    $stmt_lista_tutorias = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, a.apellidos, a.nombre
+                                           FROM tutoría AS t
+                                           INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                           INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                           INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                           INNER JOIN usuarios AS u ON tu.id_usuario = u.id
+                                           WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_lista_tutorias->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_lista_tutorias->execute();
+
+    // Guardar las tutorías del tutor en un array
+    $tutorias = $stmt_lista_tutorias->fetchAll(PDO::FETCH_ASSOC);
+
+    // Modificar la consulta SQL para obtener la lista de tutorías del mismo alumno
+    $stmt_lista_tutorias_alumno = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
+                                                  FROM tutoría AS t
+                                                  INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                                  INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                                  INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                                  INNER JOIN usuarios AS u ON a.id_usuario = u.id
+                                                  WHERE u.nombre_usuario = :nombre_usuario");
+    $stmt_lista_tutorias_alumno->bindParam(':nombre_usuario', $nombre_usuario);
+    $stmt_lista_tutorias_alumno->execute();
+
+    // Guardar las tutorías del alumno en un array
+    $tutorias_alumno = $stmt_lista_tutorias_alumno->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    $fecha_tutoria = "Error al obtener las tutorías";
+    $hora_tutoria = "";
+    $tema_tutoria = "";
+    $nombre_curso = "";
+    $apellidos_tutor = "";
+    $nombre_tutor = "";
+}*/
+try {
+    // ... (código anterior para obtener $cod_alumno)
+
+    // Preparar la consulta SQL para obtener la primera tutoría del alumno
+    $stmt_tutoria = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
+                                    FROM tutoría AS t
+                                    INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                    INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                    INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                    WHERE a.cod_alumno = :cod_alumno");
+    $stmt_tutoria->bindParam(':cod_alumno', $cod_alumno);
+    $stmt_tutoria->execute();
+
+    // Verificar si se encontró una tutoría para el alumno
+    if ($stmt_tutoria->rowCount() > 0) {
+        $resultado_tutoria = $stmt_tutoria->fetch(PDO::FETCH_ASSOC);
+        // Resto del código para mostrar la información de la tutoría
+    } else {
+        // Si no se encontró una tutoría, mostrar un mensaje o asignar valores por defecto
+    }
+
+    // Preparar la consulta SQL para obtener la lista de todas las tutorías del mismo alumno
+    $stmt_lista_tutorias_alumno = $conn->prepare("SELECT t.fecha, t.hora, t.tema, c.nombre_curso, tu.apellidos, tu.nombre
+                                                  FROM tutoría AS t
+                                                  INNER JOIN curso AS c ON t.codcurso = c.cod_curso
+                                                  INNER JOIN tutor AS tu ON t.codtutor = tu.cod_tutor
+                                                  INNER JOIN alumno AS a ON t.codalumno = a.cod_alumno
+                                                  WHERE a.cod_alumno = :cod_alumno");
+    $stmt_lista_tutorias_alumno->bindParam(':cod_alumno', $cod_alumno);
+    $stmt_lista_tutorias_alumno->execute();
+
+    // Guardar las tutorías del alumno en un array
+    $tutorias_alumno = $stmt_lista_tutorias_alumno->fetchAll(PDO::FETCH_ASSOC);
+} catch(PDOException $e) {
+    // Manejar errores de base de datos
+    // Resto del código para manejar el error
 }
 ?>
 
@@ -223,43 +336,14 @@ try {
             padding: 10px 20px;
             margin: 0 10px;
             cursor: pointer;
-        }
-        .contenedor-general{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-        .contenedor-datos{
-            width: 50%;
-            align-items: center; /* Centrado vertical */
-            justify-content: center; /* Centrado horizontal */
-            background-color: #455a64;  
-            margin: 0px 20px 10px 0px;
-            border: 2px solid #ffffff; /* Borde */  
-            padding: 20px;
-            text-align: center;
-            border-radius: 30px;   
-        }
-        .contenedor-form{
-            width: 50%;          
-            align-items: center; /* Centrado vertical */
-            justify-content: center; /* Centrado horizontal */
-            background-color: #455a64; 
-            margin: 0px 10px 0px 20px;  
-            padding: 20px 20px 40px 20px;
-            border-radius: 30px; 
-        }       
+        }     
         .main-content {
             flex: 1;
             padding: 40px;
             width: 100%;          
         }
-        .cont_general{
-            width:100%;                      
-        }
-
         .main-content h1 {
-            color: #fff; /* Color blanco para el encabezado h1 */
+            color: #000; /* Color blanco para el encabezado h1 */
             width: 100%;
             text-align: center;
         }
@@ -268,10 +352,8 @@ try {
             text-align: center;
             color: #000;
             background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 30px;  
-            
+            border-radius: 30px;            
         }
-
         form {
             max-width: 500px;
             margin: auto;
@@ -319,49 +401,27 @@ try {
             color: #000; /* Texto negro en el mensaje de confirmación */
         }
 
-
-        /* estilos para tablas curso y profesor*/
-
-        .titulo-seccion {
-            color: #ffffff; /* Color del texto */
-            font-size: 30px; /* Tamaño del texto */
-            margin-bottom: 10px; /* Espaciado inferior */
-            background-color: rgba(0, 0, 0, 0.5);
-            border-radius: 30px; 
-                     
+        .contenedor-general{
+            width: 100%;
+            background-color: #f5f5f5;
+            padding: 20px;
+        } 
+        .tutorias-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
 
-        .contenedor-cursos {
-            color: #ffffff;
-            background-color: #607d8b;  
-            border-radius: 30px;
-            padding: 10px 0px 10px 0px;                     
+        .table-header, .table-cell {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
 
-        .contenedor-tutores{
-            color: #ffffff;
-            background-color: #607d8b; 
-            border-radius: 30px;
-            padding: 10px 0px 10px 0px;  
-
-        }
-
-        .lista-cursos, .lista-tutores {
-            color: #ffffff; /* Color del texto */
-            list-style: none; /* Eliminar viñetas */
-            padding: 0; /* Eliminar relleno */
-            margin: 0; /* Eliminar márgenes */
-            background-color: #607d8b;
-            border-radius: 30px; 
-        }
-
-        .item-curso, .item-tutor {
-            color: #ffffff; /* Color del texto */
-            font-size: 20px; /* Tamaño del texto */
-            margin-bottom: 5px; /* Espaciado inferior */
-            list-style: none;
-               
-        }
+        .table-header {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }      
     </style>
 </head>
 <body>
@@ -388,138 +448,37 @@ try {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
-            <div class="cont_general">                       
-                <div class="contenedor-general">
-                    <div class="contenedor-datos">
-                        <?php
-                        // Configuración de la conexión a la base de datos
-                        $servername = "127.0.0.1:3307";
-                        $username = "pma";
-                        $password = "";
-                        $dbname = "sma_unayoe";
+            <h1>Tutorías del Alumno</h1>                                  
+            <div class="contenedor-general">               
+            <?php
+                // Ordenar las tutorías por fecha
+                usort($tutorias_alumno, function ($a, $b) {
+                    return strtotime($a['fecha'] . ' ' . $a['hora']) - strtotime($b['fecha'] . ' ' . $b['hora']);
+                });
 
-                        // Crear la conexión
-                        $conn = new mysqli($servername, $username, $password, $dbname);
+                // Mostrar la lista de tutorías del alumno en una tabla con estilos
+                echo "<h2>Todas las Tutorías</h2>";
+                echo "<table class='tutorias-table'>";
+                echo "<tr>";
+                echo "<th class='table-header'>Fecha</th>";
+                echo "<th class='table-header'>Hora</th>";
+                echo "<th class='table-header'>Tema</th>";
+                echo "<th class='table-header'>Curso</th>";
+                echo "<th class='table-header'>Tutor</th>";
+                echo "</tr>";
 
-                        // Verificar la conexión
-                        if ($conn->connect_error) {
-                            die("Error de conexión: " . $conn->connect_error);
-                        }
-
-                        // Consulta para obtener todos los cursos
-                        $cursos_query = "SELECT * FROM curso";
-                        $cursos_result = $conn->query($cursos_query);
-
-                        // Consulta para obtener todos los tutores
-                        $tutores_query = "SELECT * FROM tutor";
-                        $tutores_result = $conn->query($tutores_query);
-
-                        // Verificar si hay resultados y mostrarlos
-                        if ($cursos_result->num_rows > 0) {
-                            echo "<h2 class='titulo-seccion'>Cursos</h2>";
-                            echo "<div class='contenedor-cursos'>";
-                            echo "<ul class='lista-cursos style='padding: 0px;'>";        
-                            while ($curso = $cursos_result->fetch_assoc()) {
-                                echo "<hr>";        
-                                echo "<br><li class='item-curso' style='font-size: 20px;'>Curso: {$curso['nombre_curso']}</li>"; 
-                                echo "<li class='item-curso'>Código: {$curso['cod_curso']}</li>";                                  
-                                echo "<li class='item-curso'>Ciclo {$curso['ciclo']}</li>";
-                                echo "<li class='item-curso'>Créditos: {$curso['creditos']}</li><br>";
-                                echo "<hr>";    
-                            }
-                            echo "</ul>";                          
-                            echo "</div>";                      
-                        } else {
-                            echo "No hay cursos disponibles.";
-                        }
-
-                        if ($tutores_result->num_rows > 0) {
-                            echo "<h2 class='titulo-seccion'>Tutores</h2>";
-                            echo "<div class='contenedor-tutores'>";
-                            echo "<ul class='lista-tutores'>";
-                            while ($tutor = $tutores_result->fetch_assoc()) {
-                                echo "<hr>";
-                                echo "<br><li class='item-curso'>Nombre: {$tutor['nombre']}</li>"; 
-                                echo "<li class='item-curso'>Código: {$tutor['cod_tutor']}</li>";                                  
-                                echo "<li class='item-curso'>Correo {$tutor['correo']}</li>";
-                                echo "<li class='item-curso'>Numero: {$tutor['numero_celular']}</li><br>";
-                                echo "<hr>"; 
-                            }
-                            echo "</ul>";
-                            echo "</div>";
-                        } else {
-                            echo "No hay tutores disponibles.";
-                        }
-
-                        // Cerrar la conexión
-                        $conn->close();
-                        ?>
-                    </div>         
-                    <div class="contenedor-form">
-                        <h1 class="titulo_agregar_tutoria">Agregar Tutoría</h1>
-                        <!-- Formulario para agregar tutoría -->
-                        <!-- Formulario para agregar tutoría -->
-                        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-                            <label for="codalumno">Código Alumno:</label>
-                            
-                            <input type="text" name="codalumno" value="<?php echo htmlspecialchars($cod_alumno); ?>" readonly required>
-
-                            <label for="codtutor">Código Tutor:</label>
-                            <select name="codtutor" required>
-                                <!-- Opciones para seleccionar el código del tutor -->
-                                <?php
-                                $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
-
-                                if ($conexion->connect_error) {
-                                    die("Error de conexión: " . $conexion->connect_error);
-                                }
-
-                                // Consulta para obtener los códigos de los tutores ordenados alfabéticamente
-                                $consulta_tutores = $conexion->query("SELECT cod_tutor FROM tutor ORDER BY nombre");
-
-                                while ($fila = $consulta_tutores->fetch_assoc()) {
-                                    echo "<option value='" . $fila['cod_tutor'] . "'>" . $fila['cod_tutor'] . "</option>";
-                                }
-
-                                $conexion->close();
-                                ?>
-                            </select>
-
-                            <label for="codcurso">Código Curso:</label>
-                            <select name="codcurso" required>
-                                <!-- Opciones para seleccionar el código del curso -->
-                                <?php
-                                $conexion = new mysqli("localhost:3307", "pma", "", "sma_unayoe");
-
-                                if ($conexion->connect_error) {
-                                    die("Error de conexión: " . $conexion->connect_error);
-                                }
-
-                                // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
-                                $consulta_cursos = $conexion->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
-
-                                while ($fila = $consulta_cursos->fetch_assoc()) {
-                                    echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
-                                }
-
-                                $conexion->close();
-                                ?>
-                            </select>
-
-                            <label for="fecha">Fecha:</label>
-                            <input type="date" name="fecha" required>
-
-                            <label for="hora">Hora:</label>
-                            <input type="time" name="hora" required>
-
-                            <label for="tema">Tema (mínimo 10 letras):</label> 
-                            <input type="text" name="tema" required minlength="10">
-
-                            <button type="submit">Agregar Tutoría</button>
-                        </form>     
-                    </div>
-                </div>
-            </div>     
+                foreach ($tutorias_alumno as $tutoria_alumno) {
+                    echo "<tr>";
+                    echo "<td class='table-cell'>{$tutoria_alumno['fecha']}</td>";
+                    echo "<td class='table-cell'>{$tutoria_alumno['hora']}</td>";
+                    echo "<td class='table-cell'>{$tutoria_alumno['tema']}</td>";
+                    echo "<td class='table-cell'>{$tutoria_alumno['nombre_curso']}</td>";
+                    echo "<td class='table-cell'>{$tutoria_alumno['nombre']} {$tutoria_alumno['apellidos']}</td>";
+                    echo "</tr>";
+                }
+                echo "</table>";
+            ?>                                         
+            </div>               
         </div>
     </div>
 
