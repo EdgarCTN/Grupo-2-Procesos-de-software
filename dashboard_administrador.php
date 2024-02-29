@@ -131,7 +131,6 @@ try {
                 $nombre_admin = $admin_resultado['nombre'];
 
                 // Mostrar solo el nombre del administrador con color celeste
-               // Mostrar solo el nombre del administrador con color celeste
                 echo "<div class='admin-info'>";
                 echo "<p style='color: #000;'>Administrador: <span style='color: #007BFF;'>$nombre_admin</span></p>";
                 echo "</div>";
@@ -193,5 +192,30 @@ try {
             </div>
         </div>
     </div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <p>Confirmar salida</p>
+            <div class="popup-buttons">
+                <button onclick="confirmLogout()">Confirmar</button>
+                <button onclick="hidePopup()">Rechazar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            // Redirigir al usuario al login
+            window.location.href = 'login.php';
+        }
+    </script>
 </body>
 </html>

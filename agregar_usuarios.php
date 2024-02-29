@@ -23,14 +23,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Comenzar una transacción
         $conexion->begin_transaction();
 
-        // Preparar la consulta para insertar un nuevo usuario
+        // Modificar el formato del nombre antes de la inserción en usuarios
+        $nombre_completo = "$apellidos, $nombre";
+
+        // Preparar la consulta para insertar un nuevo usuario en la tabla usuarios
         $consulta_usuario = $conexion->prepare("INSERT INTO usuarios (nombre, nombre_usuario, contraseña, rol, ruta_foto) VALUES (?, ?, ?, ?, ?)");
+        $consulta_usuario->bind_param("sssss", $nombre_completo, $nombre_usuario, $password, $rol, $valor_por_defecto_ruta_foto);
 
         // Asignar una cadena vacía como valor por defecto para la columna ruta_foto
         $valor_por_defecto_ruta_foto = "";
 
         // Vincular los parámetros y ejecutar la consulta
-        $consulta_usuario->bind_param("sssss", $nombre, $nombre_usuario, $password, $rol, $valor_por_defecto_ruta_foto);
         $consulta_usuario->execute();
 
         // Obtener el ID del usuario recién insertado
@@ -74,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -174,7 +176,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <img src="fisi.png" alt="Logo Facultad">
             </div>
             <ul>
-            <li><a href="dashboard_administrador.php">Inicio</a></li>
+                <li><a href="dashboard_administrador.php">Inicio</a></li>
                 <li><a href="agregar_usuarios.php">Agregar Usuarios</a></li>
                 <li><a href="eliminar_usuario.php">Eliminar Usuario</a></li>
                 <li><a href="agregar_curso.php">Agregar Curso</a></li>
