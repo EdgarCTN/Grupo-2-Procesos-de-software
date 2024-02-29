@@ -50,9 +50,9 @@ try {
         }
 
         .user-info {
-            max-width: 600px; /* Ajusta el ancho según sea necesario */
+            max-width: 275px; /* Ajusta el ancho según sea necesario */
             margin-left: 10px; /* Ajustado para mover la tarjeta más a la izquierda */
-            margin-top: 20px; /* Ajustado para mover la tarjeta más arriba */
+            margin-top: 21px; /* Ajustado para mover la tarjeta más arriba */
         }
 
         .user-photo img {
@@ -123,8 +123,17 @@ try {
                 }
                 echo "</div>";
 
+                // Obtener el nombre del administrador desde la base de datos
+                $stmt_admin = $conn->prepare("SELECT nombre FROM usuarios WHERE nombre_usuario = :nombre_usuario");
+                $stmt_admin->bindParam(':nombre_usuario', $nombre_usuario);
+                $stmt_admin->execute();
+                $admin_resultado = $stmt_admin->fetch(PDO::FETCH_ASSOC);
+                $nombre_admin = $admin_resultado['nombre'];
+
+                // Mostrar solo el nombre del administrador con color celeste
+               // Mostrar solo el nombre del administrador con color celeste
                 echo "<div class='admin-info'>";
-                echo "<p>Administrador: <span>$nombre_usuario</span></p>";
+                echo "<p style='color: #000;'>Administrador: <span style='color: #007BFF;'>$nombre_admin</span></p>";
                 echo "</div>";
                 echo "</div>";
                 echo "</div>";
@@ -133,7 +142,6 @@ try {
                 echo "<p>Por favor, inicia sesión para ver tus datos.</p>";
             }
             ?>
-
             <!-- Mueve el título fuera del contenedor de la tabla -->
             <div class="table-container">
                 <h1>Tutorías Programadas</h1>
