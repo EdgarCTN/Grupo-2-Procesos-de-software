@@ -163,7 +163,7 @@ try {
                 <li><a href="dashboard_tutor.php">Inicio</a></li>
                 <li><a href="dashboard_tabla_profesor.php">Alumnos</a></li>
                 <li><a href="dashboard_tutorias_profesor.php">Tutorias</a></li>
-
+                <li><a href="consultas_tutor.php">Consultas</a></li>
                 <li><button onclick="showPopup()">Salir</button></li>
             </ul>
         </div>
