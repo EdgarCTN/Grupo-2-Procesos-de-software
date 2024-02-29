@@ -91,227 +91,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio - Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #1e272e; /* Cambiar el color de fondo a azul oscuro */
-        }
-        /* Estilos del botón "Agregar Tutoría" */
-        .contenedor-form button[type="submit"] {
-            padding: 10px 20px;
-            margin-top: 20px;
-            background-color: #2ecc71; /* Cambiar el color de fondo a verde */
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%; /* Utilizar todo el ancho disponible */
-            font-size: 25px; /* Tamaño de fuente */
-            font-weight: bold; /* Negrita */
-        }
-        .contenedor-form button[type="submit"]:hover {
-            background-color: #27ae60; /* Cambiar el color de fondo al pasar el ratón */
-        }
+    <link rel="stylesheet" type="text/css" href="css/styles_profesor_tutoria.css">
+  
 
-        /* Resto de estilos del documento... */
-        .container {
-            display: flex;
-            min-height: 100vh;
-            margin-left: auto; /* Mover el contenido hacia la derecha */
-            padding-right: 20px; /* Ajustar el espacio en la derecha */
-        }
-        .sidebar {
-            background-color: #2c3e50;
-            color: #fff;
-            padding: 20px;
-            width: 200px;
-            transition: width 0.5s;
-            overflow-x: hidden;
-        }
-        .sidebar.closed {
-            width: 60px;
-        }
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0.5s;
-        }
-        .sidebar.closed ul {
-            visibility: hidden;
-            opacity: 0;
-        }
-        .sidebar li {
-            margin-bottom: 15px;
-        }
-        .sidebar a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            display: block;
-            padding: 10px 15px;
-            border-radius: 10px;
-            transition: background-color 0.3s;
-            background-color: #455a64;
-        }
-        .sidebar a:hover {
-            background-color: #607d8b;
-        }
-        .sidebar-logo {
-            text-align: center;
-            margin-bottom: 20px;
-            transition: all 0.5s;
-        }
-        .sidebar-logo img {
-            max-width: 150px;
-            margin-top: 30px;
-            transition: all 0.5s;
-        }
-        .sidebar.closed .sidebar-logo {
-            margin-bottom: 10px;
-        }
-        .sidebar.closed .sidebar-logo img {
-            max-width: 50px;
-        }
-        .main-content {
-            background-color: #1e272e; /* Cambiar el color de fondo a azul oscuro */
-            padding: 20px;
-            flex: 1;
-        }
-        .welcome-message {
-            margin-bottom: 20px;
-            font-size: 24px;
-            border-bottom: 2px solid #2c3e50;
-            padding-bottom: 10px;
-            color: #fff; /* Cambiar el color del texto a blanco */
-        }
-        .menu-toggle {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            cursor: pointer;
-        }
-        .menu-toggle img {
-            width: 30px;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
-            z-index: 9999;
-        }
-        .popup-content {
-            text-align: center;
-        }
-        .popup-buttons {
-            margin-top: 20px;
-        }
-        .popup-buttons button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
 
-        .contenedor-general{
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-        }
-
-        .cont_general{
-            width:100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between; /* Alinear los contenedores al extremo */                      
-        }
-
-        .contenedor-datos {
-            width: 50%;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            margin: 0px 20px 10px 0px;
-            border: 2px solid #ffffff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 30px;
-            color: #000; /* Color del texto */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Sombra */
-        }
-
-        .contenedor-form {
-            width: 50%;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            margin: 0px 10px 0px 20px;
-            padding: 20px 20px 40px 20px;
-            border-radius: 30px;
-            color: #000; /* Color del texto */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3); /* Sombra */
-        }
-
-        .titulo_agregar_tutoria {
-            background-color: #2c3e50;
-            color: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            margin-top: 0; /* Eliminar el margen superior */
-            text-align: center; /* Centrar el texto */
-        }
-        .contenedor-form label {
-            display: block;
-            margin-bottom: 10px;
-            color: #1e272e;
-        }
-        .contenedor-form input[type="text"],
-        .contenedor-form input[type="date"],
-        .contenedor-form input[type="time"],
-        .contenedor-form select,
-        .contenedor-form input[type="submit"] {
-            width: calc(100% - 22px); /* Ajustar el ancho para evitar desbordamiento */
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 16px;
-            color: #555;
-            margin-left: 11px; /* Centrar los campos de entrada */
-        }
-        .contenedor-form input[type="submit"] {
-            width: 100%; /* Utilizar todo el ancho disponible */
-            padding: 15px; /* Aumentar el relleno */
-            background-color: #2ecc71; /* Cambiar el color de fondo del botón */
-            color: #fff;
-            cursor: pointer;
-            margin-left: 0; /* Eliminar el margen izquierdo */
-        }
-        .contenedor-form input[type="submit"]:hover {
-            background-color: #27ae60; /* Cambiar el color de fondo del botón al pasar el ratón */
-        }
-    </style>
 </head>
 <body>
+
     <div class="container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-logo">
@@ -333,7 +125,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             ?>
 
-            <!-- Formulario para agregar tutoría -->
+            <!-- Botón para ir a dashboard_tutorias_profesor_2.php -->
+            <div>
+                <button onclick="location.href='dashboard_tutorias_profesor_2.php';">Crear nueva tutoria</button>
+            </div>
+
+            <!-- Formulario para mostrar las tutorías -->
             <div class="cont_general">                       
                 <div class="contenedor-datos">
                     <h2>Tutorías asignadas</h2>
@@ -347,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Verificar si hay tutorías
                     if ($stmt_tutorias->rowCount() > 0) {
                         echo "<table border='1'>";
-                        echo "<tr><th>Código Alumno</th><th>Código Curso</th><th>Fecha</th><th>Hora</th><th>Tema</th></tr>";
+                        echo "<tr><th>Código Alumno</th><th>Código Curso</th><th>Fecha</th><th>Hora</th><th>Tema</th><th>Finalizar Tutoría</th></tr>";
                         while ($fila = $stmt_tutorias->fetch(PDO::FETCH_ASSOC)) {
                             echo "<tr>";
                             echo "<td>" . $fila['codalumno'] . "</td>";
@@ -355,6 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "<td>" . $fila['fecha'] . "</td>";
                             echo "<td>" . $fila['hora'] . "</td>";
                             echo "<td>" . $fila['tema'] . "</td>";
+                            echo "<td><button class='finalizar-btn' onclick='finalizarTutoria(" . $fila['id_tutoria'] . ")'>Finalizar</button></td>";
                             echo "</tr>";
                         }
                         echo "</table>";
@@ -362,74 +160,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         echo "<p>No hay tutorías asignadas.</p>";
                     }
                     ?>
-                </div>
-                <div class="contenedor-form">
-                    <h1 class="titulo_agregar_tutoria">Agregar Tutoría</h1>
-                    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-
-                       <!-- Campo para el Código Tutor -->
-                        <label for="codtutor">Código Tutor:</label>
-                        <?php
-                        // Mostrar el código del tutor si está disponible
-                        if (!empty($codigo_tutor)) {
-                            // Mostrar el código del tutor en un campo de solo lectura
-                            echo '<input type="text" name="codtutor" value="' . htmlspecialchars($codigo_tutor) . '" readonly required>';
-                        } else {
-                            // Si no se encuentra el código del tutor, mostrar un mensaje indicando que no está disponible
-                            echo '<input type="text" name="codtutor" value="Código no disponible" readonly required>';
-                        }
-                        ?>
-                                                                        
-                        <!-- Otros campos del formulario -->
-                        <label for="codalumno">Código Alumno:</label>
-                        <select name="codalumno" required>
-                        <!-- Opciones para seleccionar el código del alumno -->
-                        <?php
-                            try {
-                                // Preparar la consulta SQL para obtener los códigos de todos los alumnos
-                                $stmt_alumnos = $conn->query("SELECT cod_alumno FROM alumno");
-                        
-                                // Verificar si se encontraron alumnos
-                                if ($stmt_alumnos->rowCount() > 0) {
-                                    while ($fila = $stmt_alumnos->fetch(PDO::FETCH_ASSOC)) {
-                                        echo "<option value='" . $fila['cod_alumno'] . "'>" . $fila['cod_alumno'] . "</option>";
-                                    }
-                                } else {
-                                    // Si no se encuentran alumnos, mostrar un mensaje de error
-                                    echo "<option value=''>No hay alumnos disponibles</option>";
-                                }
-                            } catch (PDOException $e) {
-                                // Manejar errores de base de datos
-                                echo "<option value=''>Error al obtener los alumnos</option>";
-                            }
-                            ?>
-                        </select>
-
-
-                        <label for="codcurso">Código Curso:</label>
-                        <select name="codcurso" required>
-                            <!-- Opciones para seleccionar el código del curso -->
-                            <?php
-                            // Consulta para obtener los códigos de los cursos ordenados alfabéticamente
-                            $consulta_cursos = $conn->query("SELECT cod_curso FROM curso ORDER BY nombre_curso");
-
-                            while ($fila = $consulta_cursos->fetch(PDO::FETCH_ASSOC)) {
-                                echo "<option value='" . $fila['cod_curso'] . "'>" . $fila['cod_curso'] . "</option>";
-                            }
-                            ?>
-                        </select>
-
-                        <label for="fecha">Fecha:</label>
-                        <input type="date" name="fecha" required>
-
-                        <label for="hora">Hora:</label>
-                        <input type="time" name="hora" required>
-
-                        <label for="tema">Tema (mínimo 10 letras):</label> 
-                        <input type="text" name="tema" required minlength="10">
-
-                        <button type="submit">Agregar Tutoría</button>
-                    </form>     
                 </div>
             </div> 
         </div>
@@ -468,6 +198,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         function confirmLogout() {
             // Redirigir al usuario al login
             window.location.href = 'login.php';
+        }
+
+        function finalizarTutoria(tutoriaId) {
+            // Redirigir a la página para finalizar la tutoría, pasando el ID de la tutoría como parámetro
+            window.location.href = 'finalizar_tutoria.php?tutoriaId=' + tutoriaId;
         }
     </script>
 </body>
