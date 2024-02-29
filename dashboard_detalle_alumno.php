@@ -73,6 +73,10 @@ if (isset($_GET['codigo'])) {
         echo "  padding: 20px;";
         echo "  border-radius: 10px;";
         echo "}";
+        echo ".volver-btn {";
+        echo "  margin-top: 20px;";
+        echo "  text-align: center;";
+        echo "}";
         echo "</style>";
         echo "</head>";
         echo "<body>";
@@ -125,6 +129,11 @@ if (isset($_GET['codigo'])) {
         echo "</div>"; // Cierre de la fila
         echo "</div>"; // Cierre del contenedor
 
+        // Botón Volver
+        echo "<div class='volver-btn'>";
+        echo "<a href='dashboard_tabla_profesor.php' class='btn btn-primary'>Volver</a>";
+        echo "</div>";
+
         echo "</body>";
         echo "</html>";
     } else {
@@ -135,3 +144,4 @@ if (isset($_GET['codigo'])) {
     echo "No se proporcionó el código del alumno.";
 }
 ?>
+
